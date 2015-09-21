@@ -1,5 +1,4 @@
 var fs = require('fs');
-// var https = require('https');
 var request = require('request');
 var express = require('express');
 var bodyParser = require('body-parser');              //Pulls information from HTML post
@@ -19,19 +18,19 @@ var searchApiPath = '/jira/rest/api/2/search?jql=';
 app.get('/reporting/api', function(req,res){
   res.send("Welcome to reporting");
 });
+
 /**
  * Get jira item by issue id.
  */
 app.get('/reporting/api/jira/:issue', function(req,res){
   var path = jiraUrl + "/jira/rest/api/latest/issue/" + req.params.issue;
-  return request(path, function jiraCallback(error, response, body){
+  request(path, function jiraCallback(error, response, body){
     if (!error && response.statusCode == 200) {
       res.send(body);
     } else {
       throw err;
     }
   });
-  res.end();
 });
 
 /**
@@ -45,11 +44,9 @@ app.get('/reporting/api/alfresco/:version', function(req,res){
   "AND priority in (blocker, critical) AND type in (bug)" +
   "ORDER BY created DESC";
   var path = jiraUrl + searchApiPath + filter;
-
-  return request(path, function jiraCallback(error, response, body){
+  request(path, function jiraCallback(error, response, body){
     res.send(body);
   });
-  res.end();
 });
 
 app.get('/users/:username',function(req,res){
