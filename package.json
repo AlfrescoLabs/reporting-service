@@ -1,0 +1,23 @@
+{
+  "name": "report-service",
+  "version": "1.0.0",
+  "description": "Test platform reporting service.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "author": "Michael Suzuki",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "^4.13.3",
+    "jira": "^0.9.2",
+    "mongodb": "^1.4.39",
+    "mongoskin": "^1.4.13"
+  },
+  "devDependencies": {
+    "expect": "^1.10.0",
+    "mocha": "^2.3.2",
+    "superagent": "^1.4.0"
+  }
+}
