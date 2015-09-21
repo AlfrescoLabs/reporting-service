@@ -46,7 +46,7 @@ app.get('/reporting/api/alfresco/:version', function(req,res){
   "ORDER BY created DESC";
   var path = jiraUrl + searchApiPath + filter;
 
-  request(path, function jiraCallback(error, response, body){
+  return request(path, function jiraCallback(error, response, body){
     res.send(body);
   });
   res.end();
