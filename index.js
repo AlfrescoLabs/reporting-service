@@ -1,6 +1,6 @@
-var request = require('request');
-var async = require('async');
-var express = require('express');
+var request = require('request');        //http request
+var async = require('async');            //async lib
+var express = require('express');        // Web framework
 var bodyParser = require('body-parser'); //Pulls information from HTML post
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 
@@ -44,6 +44,7 @@ app.get('/reporting/api/alfresco/:version', processQuery);
 function processQuery(req, res) {
   var version = req.params.version;
   var json = {
+    date: new Date().toLocaleDateString(),
     open: {
       count: 0,
       issues: []
@@ -120,21 +121,28 @@ function processQuery(req, res) {
     /*
      * Send collated result
      */
+
     function display(err, results) {
       if (err) {
         console.log(err);
         res.status(500).send('Internal Server Error');
         return;
       }
-      //store it mongodb
-      db.collection('report').insert({'name':'hi'},function(err,callback){
+      //store it to mongodb
+      report = db.collection('report');
+      report.insert(json ,function(err,result){
         if(err) console.log(err)
+        if(result) {
+          console.log('Added record');
+          res.send(json)
+        }
       });
-      res.send(json)
     }
   )
 }
-
+/**
+ * Get status of release from db.
+ */
 app.get('/reporting/api/alfresco/:version/status', function(req, res) {
   var name = req.params.version;
   db.collection('report').find({}).toArray(function(err, result) {

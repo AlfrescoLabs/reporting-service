@@ -31,11 +31,15 @@ describe('/reporting/api/:product/:version', function() {
   });
 
   it('should return open and closed jira issues', function(done) {
+    this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(
       function(err, res){
         assert.ifError(err);
         assert(res.status === 200);
         var json = res.body;
+        json.should.have.property('date');
+        // var date = new Date().toLocaleDateString();
+        // json.date.should.be.eql(date);
         json.should.have.property('open');
         json.open.should.have.property('count');
         json.open.should.have.property('issues');
@@ -46,8 +50,6 @@ describe('/reporting/api/:product/:version', function() {
         issues[0].should.have.property('id');
         issues[0].should.have.property('link');
         issues[0].should.have.property('type');
-
-
         done();
       });
   });
