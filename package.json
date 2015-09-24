@@ -19,6 +19,7 @@
   "devDependencies": {
     "expect": "^1.10.0",
     "mocha": "^2.3.2",
+    "should": "^7.1.0",
     "superagent": "^1.4.0"
   }
 }

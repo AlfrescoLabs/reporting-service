@@ -54,75 +54,89 @@ function processQuery(req, res) {
     }
   };
   async.parallel([
-    /**
-     * Get open bugs and populate json object.
-     */
-    function getOpenBugs(callback) {
-      var filter = "project = ace AND status not in (closed, verified)" +
-        "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
-        "AND priority in (blocker, critical) AND type in (bug)" +
-        "ORDER BY created DESC";
-      var path = jiraUrl + searchApiPath + filter;
-      //Query jira for open bugs
-      request(path, function(err, response, body) {
-        // JSON body
-        if(err) { console.log(err); callback(true); return; }
-        var data = JSON.parse(body);
-        json.open.count = data.total;
-        var issues = data.issues;
-        issues.map(function(issue) {
-          var item = {
-            id: issue.key,
-            link: issue.self,
-            type: issue.fields.priority.name
-          };
-          json.open.issues.push(item);
+      /**
+       * Get open bugs and populate json object.
+       */
+      function getOpenBugs(callback) {
+        var filter = "project = ace AND status not in (closed, verified)" +
+          "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
+          "AND priority in (blocker, critical) AND type in (bug)" +
+          "ORDER BY created DESC";
+        var path = jiraUrl + searchApiPath + filter;
+        //Query jira for open bugs
+        request(path, function(err, response, body) {
+          // JSON body
+          if (err) {
+            console.log(err);
+            callback(true);
+            return;
+          }
+          var data = JSON.parse(body);
+          json.open.count = data.total;
+          var issues = data.issues;
+          issues.map(function(issue) {
+            var item = {
+              id: issue.key,
+              link: issue.self,
+              type: issue.fields.priority.name
+            };
+            json.open.issues.push(item);
+          });
+          callback(false);
         });
-        callback(false);
-      });
-    },
+      },
 
-    /**
-     * Get closed bugs and populate json object.
-     */
-    function getCloseBugs(callback) {
-      var filter = "project = ace AND status in (closed, verified)" +
-        "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
-        "AND priority in (blocker, critical) AND type in (bug)" +
-        "ORDER BY created DESC";
-      var path = jiraUrl + searchApiPath + filter;
-      //Query jira for open bugs
-      request(path, function(err, response, body) {
-        if(err){ console.log(err); callback(true); return;}
-        var data = JSON.parse(body);
-        json.close.count = data.total;
-        var issues = data.issues;
-        issues.map(function(issue) {
-          var item = {
-            id: issue.key,
-            link: issue.self,
-            type: issue.fields.priority.name
-          };
-          json.close.issues.push(item);
+      /**
+       * Get closed bugs and populate json object.
+       */
+      function getCloseBugs(callback) {
+        var filter = "project = ace AND status in (closed, verified)" +
+          "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
+          "AND priority in (blocker, critical) AND type in (bug)" +
+          "ORDER BY created DESC";
+        var path = jiraUrl + searchApiPath + filter;
+        //Query jira for open bugs
+        request(path, function(err, response, body) {
+          if (err) {
+            console.log(err);
+            callback(true);
+            return;
+          }
+          var data = JSON.parse(body);
+          json.close.count = data.total;
+          var issues = data.issues;
+          issues.map(function(issue) {
+            var item = {
+              id: issue.key,
+              link: issue.self,
+              type: issue.fields.priority.name
+            };
+            json.close.issues.push(item);
+          });
+          callback(false);
         });
-        callback(false);
-      });
-    }],
+      }
+    ],
     /*
      * Send collated result
      */
-    function(err, results) {
+    function display(err, results) {
       if (err) {
-          console.log(err);
-          res.status(500).send('Internal Server Error');
+        console.log(err);
+        res.status(500).send('Internal Server Error');
         return;
       }
+      //store it mongodb
+      db.collection('report').insert({'name':'hi'},function(err,callback){
+        if(err) console.log(err)
+      });
       res.send(json)
     }
-  )}
+  )
+}
 
-app.get('/users/:username', function(req, res) {
-  var name = req.params.username;
+app.get('/reporting/api/alfresco/:version/status', function(req, res) {
+  var name = req.params.version;
   db.collection('report').find({}).toArray(function(err, result) {
     if (err) throw err;
     console.log(result);
