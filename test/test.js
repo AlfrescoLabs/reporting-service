@@ -22,11 +22,16 @@ describe('/reporting/api', function() {
       });
   });
 });
+// describe('reporting/api/alfresco/5.1', function() {
+//   it('Should get data from jira and upsert it to backend',function(done){
+//     this.timeout(15000); // Setting a longer timeout
+//   })
+// });
 
 describe('reporting/api/alfresco/5.1/status', function() {
 
-  it('should return open and closed jira issues', function(done) {
-    this.timeout(15000); // Setting a longer timeout
+  it('should return open and closed jira issues from mongo', function(done) {
+
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/status').end(
       function(err, res) {
         assert.ifError(err);
