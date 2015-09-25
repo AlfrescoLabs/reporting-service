@@ -25,7 +25,7 @@ describe('/reporting/api', function() {
 });
 
 describe('reporting/api/alfresco/5.1', function() {
-  it('Should get data from jira and upsert it to backend',function(done){
+  it('Should get data from jira and upsert it to mongo',function(done){
     this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(
       function(err, res) {
@@ -33,6 +33,17 @@ describe('reporting/api/alfresco/5.1', function() {
         assert(res.status === 200);
         var json = res.body;
         json.should.have.property('date');
+        done();
+      });
+    });
+    it('Should only have one entery per day',function(done){
+      this.timeout(15000); // Setting a longer timeout
+      //Call api to update backend twice
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
+      var today = new Date().toLocaleDateString();
+      db.collection('report').find({date:today}).toArray(function(err, result) {
+        result.length.should.be.below(2);
         done();
       });
     });
