@@ -25,18 +25,8 @@ describe('/reporting/api', function() {
 });
 
 describe('reporting/api/alfresco/5.1', function() {
-  it('Should get data from jira and upsert it to mongo',function(done){
     this.timeout(15000); // Setting a longer timeout
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(
-      function(err, res) {
-        assert.ifError(err);
-        assert(res.status === 200);
-        var json = res.body;
-        json.should.have.property('date');
-        done();
-      });
-    });
-    it('Should only have one entery per day',function(done){
+    it('Should get data and store only one entery per day',function(done){
       this.timeout(15000); // Setting a longer timeout
       //Call api to update backend twice
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
@@ -44,6 +34,7 @@ describe('reporting/api/alfresco/5.1', function() {
       var today = new Date().toLocaleDateString();
       db.collection('report').find({date:today}).toArray(function(err, result) {
         result.length.should.be.below(2);
+        verifyModel(result[0]);
         done();
       });
     });
@@ -60,19 +51,20 @@ describe('reporting/api/alfresco/5.1/status', function() {
         var response = res.body;
         var json = response[0];
         json.should.have.property('date');
-        // var date = new Date().toLocaleDateString();
-        // json.date.should.be.eql(date);
-        json.should.have.property('open');
-        json.open.should.have.property('count');
-        json.open.should.have.property('issues');
-        json.should.have.property('close');
-        json.close.should.have.property('count');
-        json.close.should.have.property('issues');
-        var issues = json.close.issues;
-        issues[0].should.have.property('id');
-        issues[0].should.have.property('link');
-        issues[0].should.have.property('type');
+        verifyModel(json);
         done();
       });
   });
 });
+function verifyModel(json){
+  json.should.have.property('open');
+  json.open.should.have.property('count');
+  json.open.should.have.property('issues');
+  json.should.have.property('close');
+  json.close.should.have.property('count');
+  json.close.should.have.property('issues');
+  var issues = json.close.issues;
+  issues[0].should.have.property('id');
+  issues[0].should.have.property('link');
+  issues[0].should.have.property('type');
+}
