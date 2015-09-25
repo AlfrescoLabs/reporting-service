@@ -128,10 +128,15 @@ function processQuery(req, res) {
         res.status(500).send('Internal Server Error');
         return;
       }
+      console.log(json.date)
+      var query = '{"date":"9/25/2015"}';
       //store it to mongodb
       report = db.collection('report');
-      report.insert(json ,function(err,result){
-        if(err) console.log(err)
+      report.update({date:json.date}, json, {upsert:true},function(err,result){
+        if(err){
+          console.log('DB error: ' + err);
+          res.status(500).send('DB error');
+        }
         if(result) {
           console.log('Added record');
           res.send(json)
@@ -147,7 +152,6 @@ app.get('/reporting/api/alfresco/:version/status', function(req, res) {
   var name = req.params.version;
   db.collection('report').find({}).toArray(function(err, result) {
     if (err) throw err;
-    console.log(result);
     res.send(result);
   });
 });
