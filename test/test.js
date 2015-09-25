@@ -3,6 +3,7 @@ var expect = require('expect');
 var superagent = require('superagent');
 var should = require('should');
 var app = require('../index');
+var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 
 
 describe('/reporting/api', function() {
@@ -22,11 +23,20 @@ describe('/reporting/api', function() {
       });
   });
 });
-// describe('reporting/api/alfresco/5.1', function() {
-//   it('Should get data from jira and upsert it to backend',function(done){
-//     this.timeout(15000); // Setting a longer timeout
-//   })
-// });
+
+describe('reporting/api/alfresco/5.1', function() {
+  it('Should get data from jira and upsert it to backend',function(done){
+    this.timeout(15000); // Setting a longer timeout
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(
+      function(err, res) {
+        assert.ifError(err);
+        assert(res.status === 200);
+        var json = res.body;
+        json.should.have.property('date');
+        done();
+      });
+    });
+});
 
 describe('reporting/api/alfresco/5.1/status', function() {
 
