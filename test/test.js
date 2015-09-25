@@ -15,28 +15,24 @@ describe('/reporting/api', function() {
 
   it('should return a welcome message', function(done) {
     superagent.get('http://localhost:3000/reporting/api').end(
-      function(err, res){
+      function(err, res) {
         assert.ifError(err);
         assert(res.status === 200);
         done();
       });
   });
 });
-describe('/reporting/api/:product/:version', function() {
-  before(function(done) {
-    done();
-  });
-  after(function(done) {
-    done();
-  });
+
+describe('reporting/api/alfresco/5.1/status', function() {
 
   it('should return open and closed jira issues', function(done) {
     this.timeout(15000); // Setting a longer timeout
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(
-      function(err, res){
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/status').end(
+      function(err, res) {
         assert.ifError(err);
         assert(res.status === 200);
-        var json = res.body;
+        var response = res.body;
+        var json = response[0];
         json.should.have.property('date');
         // var date = new Date().toLocaleDateString();
         // json.date.should.be.eql(date);
