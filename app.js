@@ -3,14 +3,17 @@ var async = require('async');            //async lib
 var express = require('express');        // Web framework
 var bodyParser = require('body-parser'); //Pulls information from HTML post
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
-
+var path = require("path");             //System path
+var React = require('react');           //React.js
+var jsx = require('node-jsx');          //JS extension relates to react
 var app = express();
-app.use(express.static('./public' + '/public')); // set the static files location
+// app.set('views', __dirname);
+// app.set('view engine', 'html');
 app.use(bodyParser.urlencoded({
   'extended': 'true'
 })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
-
+app.use(express.static(path.join(__dirname, 'public'))); // Include static assets. Not advised for production
 
 var jiraUrl = 'https://issuestest.alfresco.com';
 // var jiraUrl = 'https://issues.alfresco.com';
@@ -155,6 +158,11 @@ app.get('/reporting/api/alfresco/:version/status', function(req, res) {
     res.send(result);
   });
 });
-
+/**
+ * Display graph.
+ */
+app.get('/reporting/api/alfresco/:version/graph', function(req, res) {
+  res.sendFile(path.join(__dirname + '/index.html'));
+});
 app.listen(3000);
 module.exports = app;
