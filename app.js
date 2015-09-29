@@ -50,10 +50,14 @@ function processQuery(req, res) {
     date: new Date().toLocaleDateString(),
     open: {
       count: 0,
+      critical:0,
+      blocker:0,
       issues: []
     },
     close: {
       count: 0,
+      critical:0,
+      blocker:0,
       issues: []
     }
   };
@@ -84,7 +88,13 @@ function processQuery(req, res) {
               link: issue.self,
               type: issue.fields.priority.name
             };
-            json.open.issues.push(item);
+            if(item.type === 'Blocker'){
+              json.open.blocker ++;
+            }
+            if(item.type === 'Critical'){
+              json.open.critical ++;
+            }
+            json.open.issues.push(item);1
           });
           callback(false);
         });
@@ -115,6 +125,12 @@ function processQuery(req, res) {
               link: issue.self,
               type: issue.fields.priority.name
             };
+            if(item.type === 'Blocker'){
+              json.close.blocker ++;
+            }
+            if(item.type === 'Critical'){
+              json.close.critical ++;
+            }
             json.close.issues.push(item);
           });
           callback(false);

@@ -2,7 +2,7 @@ var assert = require('assert');
 var expect = require('expect');
 var superagent = require('superagent');
 var should = require('should');
-var app = require('../index');
+var app = require('../app');
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 
 
@@ -41,9 +41,7 @@ describe('reporting/api/alfresco/5.1', function() {
 });
 
 describe('reporting/api/alfresco/5.1/status', function() {
-
   it('should return open and closed jira issues from mongo', function(done) {
-
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/status').end(
       function(err, res) {
         assert.ifError(err);
@@ -51,6 +49,12 @@ describe('reporting/api/alfresco/5.1/status', function() {
         var response = res.body;
         var json = response[0];
         json.should.have.property('date');
+        json.open.should.have.property('blocker');
+        json.open.should.have.property('critical');
+        should.equal(json.open.critical+json.open.blocker, json.open.count)
+        json.close.should.have.property('blocker');
+        json.close.should.have.property('critical');
+        should.equal(json.close.critical+json.close.blocker, json.close.count)
         verifyModel(json);
         done();
       });
