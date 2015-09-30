@@ -1,11 +1,11 @@
-var request = require('request');        //http request
-var async = require('async');            //async lib
-var express = require('express');        // Web framework
+var request = require('request'); //http request
+var async = require('async'); //async lib
+var express = require('express'); // Web framework
 var bodyParser = require('body-parser'); //Pulls information from HTML post
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
-var path = require("path");             //System path
-var React = require('react');           //React.js
-var jsx = require('node-jsx');          //JS extension relates to react
+var path = require("path"); //System path
+var React = require('react'); //React.js
+var jsx = require('node-jsx'); //JS extension relates to react
 var app = express();
 // app.set('views', __dirname);
 // app.set('view engine', 'html');
@@ -50,14 +50,14 @@ function processQuery(req, res) {
     date: new Date().toLocaleDateString(),
     open: {
       count: 0,
-      critical:0,
-      blocker:0,
+      critical: 0,
+      blocker: 0,
       issues: []
     },
     close: {
       count: 0,
-      critical:0,
-      blocker:0,
+      critical: 0,
+      blocker: 0,
       issues: []
     }
   };
@@ -88,13 +88,14 @@ function processQuery(req, res) {
               link: issue.self,
               type: issue.fields.priority.name
             };
-            if(item.type === 'Blocker'){
-              json.open.blocker ++;
+            if (item.type === 'Blocker') {
+              json.open.blocker++;
             }
-            if(item.type === 'Critical'){
-              json.open.critical ++;
+            if (item.type === 'Critical') {
+              json.open.critical++;
             }
-            json.open.issues.push(item);1
+            json.open.issues.push(item);
+            1
           });
           callback(false);
         });
@@ -125,11 +126,11 @@ function processQuery(req, res) {
               link: issue.self,
               type: issue.fields.priority.name
             };
-            if(item.type === 'Blocker'){
-              json.close.blocker ++;
+            if (item.type === 'Blocker') {
+              json.close.blocker++;
             }
-            if(item.type === 'Critical'){
-              json.close.critical ++;
+            if (item.type === 'Critical') {
+              json.close.critical++;
             }
             json.close.issues.push(item);
           });
@@ -151,12 +152,16 @@ function processQuery(req, res) {
       var query = '{"date":"9/25/2015"}';
       //store it to mongodb
       report = db.collection('report');
-      report.update({date:json.date}, json, {upsert:true},function(err,result){
-        if(err){
+      report.update({
+        date: json.date
+      }, json, {
+        upsert: true
+      }, function(err, result) {
+        if (err) {
           console.log('DB error: ' + err);
           res.status(500).send('DB error');
         }
-        if(result) {
+        if (result) {
           console.log('Added record');
           res.send(json)
         }

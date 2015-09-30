@@ -37,6 +37,7 @@ var y = d3.scale.linear()
     .rangeRound([height, 0]);
 
 var color = d3.scale.ordinal()
+    .domain(['Closed Critical','Closed Blocker','Open Critical','Open Blocker'])
     .range(["#66cc00", "#008000", "#FF3333", "#cc0000"]);
 
 var xAxis = d3.svg.axis()
@@ -59,18 +60,32 @@ d3.json('data.json', function(error, data) {
     console.log(error);
     throw error;
   }
-  color.domain(d3.keys(data[0]).filter(function(key) {
-    console.log(key)
-    return key !== "State";
-  }));
+
 
   data.forEach(function(d) {
     var y0 = 0;
-    d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
-    d.total = d.ages[d.ages.length - 1].y1;
+    d.defects = color.domain().map(function(name) {
+       var value = 0;
+       if(name === 'Closed Critical'){
+         value = d.close.critical;
+       }
+       if(name === 'Open Critical'){
+         value = d.open.critical;
+       }
+       if(name === 'Closed Blocker'){
+         value = d.close.blocker;
+       }
+       if(name === 'Open Blocker'){
+         value = d.open.blocker;
+       }
+       return {name: name, y0: y0, y1: y0 += value};
+    });
+    d.total = d.defects[d.defects.length - 1].y1;
   });
 
-  x.domain(data.map(function(d) { return d.State; }));
+  x.domain(data.map(function(d) {
+    console.log(d.defects);
+    return d.date;}));
   y.domain([0, d3.max(data, function(d) { return d.total; })]);
 
   svg.append("g")
@@ -88,14 +103,14 @@ d3.json('data.json', function(error, data) {
       .style("text-anchor", "end")
       .text("Bug count");
 
-  var state = svg.selectAll(".state")
+  var state = svg.selectAll(".date")
       .data(data)
     .enter().append("g")
       .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x(d.State) + ",0)"; });
+      .attr("transform", function(d) { return "translate(" + x(d.date) + ",0)"; });
 
   state.selectAll("rect")
-      .data(function(d) { return d.ages; })
+      .data(function(d) { return d.defects; })
     .enter().append("rect")
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.y1); })
