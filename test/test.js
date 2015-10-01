@@ -6,24 +6,6 @@ var app = require('../app');
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 
 
-describe('/reporting/api', function() {
-  before(function(done) {
-    done();
-  });
-  after(function(done) {
-    done();
-  });
-
-  it('should return a welcome message', function(done) {
-    superagent.get('http://localhost:3000/reporting/api').end(
-      function(err, res) {
-        assert.ifError(err);
-        assert(res.status === 200);
-        done();
-      });
-  });
-});
-
 describe('reporting/api/alfresco/5.1', function() {
     this.timeout(15000); // Setting a longer timeout
     it('Should get data and store only one entery per day',function(done){
@@ -60,6 +42,7 @@ describe('reporting/api/alfresco/5.1/status', function() {
       });
   });
 });
+
 function verifyModel(json){
   json.should.have.property('open');
   json.open.should.have.property('count');
