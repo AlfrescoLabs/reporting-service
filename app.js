@@ -2,8 +2,8 @@ var express = require('express'); // Web framework
 var bodyParser = require('body-parser'); //Pulls information from HTML post
 
 var path = require("path"); //System path
-var routes = require('./route');// Application routes
-var allData = require('./allData');
+var routes = require('./routes/reports');// Application routes
+var allData = require('./routes/reports-date');
 var app = express();
 app.set('view engine', 'html');
 app.use(bodyParser.urlencoded({'extended': 'true'})); // parse application/x-www-form-urlencoded
@@ -15,4 +15,3 @@ app.use('/reporting',allData)
 
 app.listen(3000);
 module.exports = app;
-var routes = require('./route')
