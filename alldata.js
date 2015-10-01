@@ -5,33 +5,22 @@ var router = express.Router();
 var async = require('async'); //async lib
 var jiraUrl = 'https://issuestest.alfresco.com';
 var searchApiPath = '/jira/rest/api/2/search?jql=';
-router.get('/reporting/api', function(req, res) {
-  res.send("Welcome to reporting");
-});
 
-/**
- * Get jira item by issue id.
- */
-router.get('/api/jira/:issue', function(req, res) {
-  var path = jiraUrl + "/jira/rest/api/latest/issue/" + req.params.issue;
-  request(path, function jiraCallback(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.send(body);
-    } else {
-      throw err;
-    }
-  });
-});
-
-router.get('/api/alfresco/:version', processQuery);
+router.get('/api/alfresco/:version/:day/:month/:year', processQuery);
 /**
  * Get open bug list using alfresco release query.
  * Result is streamed back as json object.
  */
 function processQuery(req, res) {
   var version = req.params.version;
+  var day = req.params.day;
+  var month = req.params.month;
+  var year = req.params.year;
+  var targetDate = new Date(year,month -1, day, 0,0,0,0).toLocaleDateString();
+  var parsedDate = year +"-"+ month + "-" + day ;
+  console.log(targetDate);
   var json = {
-    date: new Date().toLocaleDateString(),
+    date: targetDate,
     open: {
       count: 0,
       critical: 0,
@@ -52,10 +41,10 @@ function processQuery(req, res) {
       function getOpenBugs(callback) {
         var filter = "project = ace AND status not in (closed, verified)" +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
-          "AND priority in (blocker, critical) AND type in (bug)"
-             + "AND (updated>'2015/09/01')"
-          + "ORDER BY created DESC";
+          "AND priority in (blocker, critical) AND type in (bug)" +
+          "AND (updated> " + parsedDate + ") ORDER BY created DESC";
         var path = jiraUrl + searchApiPath + filter;
+        console.log(path);
         //Query jira for open bugs
         request(path, function(err, response, body) {
           // JSON body
@@ -92,9 +81,8 @@ function processQuery(req, res) {
       function getCloseBugs(callback) {
         var filter = "project = ace AND status in (closed, verified)" +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
-          "AND priority in (blocker, critical) AND type in (bug)"
-            + "AND (updated>'2015/09/01')"
-          + "ORDER BY created DESC";
+          "AND priority in (blocker, critical) AND type in (bug)" +
+          "AND (updated> " + parsedDate + ") ORDER BY created DESC";
         var path = jiraUrl + searchApiPath + filter;
         //Query jira for open bugs
         request(path, function(err, response, body) {
@@ -153,21 +141,4 @@ function processQuery(req, res) {
     }
   )
 }
-/**
- * Get status of release from db.
- */
-router.get('/api/alfresco/:version/status', function(req, res) {
-  var name = req.params.version;
-  db.collection('report').find({}).toArray(function(err, result) {
-    if (err) throw err;
-    res.send(result);
-  });
-});
-
-/**
- * Display graph.
- */
-router.get('/api/alfresco/:version/graph', function(req, res) {
-  res.sendFile(path.join(__dirname + '/index.html'));
-});
 module.exports = router;
