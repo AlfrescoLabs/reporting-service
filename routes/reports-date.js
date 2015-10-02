@@ -16,11 +16,15 @@ function processQuery(req, res) {
   var day = req.params.day;
   var month = req.params.month;
   var year = req.params.year;
-  var targetDate = new Date(year,month -1, day, 0,0,0,0).toLocaleDateString();
-  var parsedDate = year +"-"+ month + "-" + day ;
-  console.log(targetDate);
+  var targetDate = new Date(year,month -1, day, 0,0,0,0);
+  var parsedDate = year + "-" + month + "-" + day;
+  var tomorrow = new Date(targetDate);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  console.log(tomorrow)
+  var parsedTomorrow = tomorrow.getFullYear() + "-" + (new Number(tomorrow.getMonth())+1) + "-" + tomorrow.getDate();
   var json = {
-    date: targetDate,
+    date: targetDate.getTime(),
+    dateDisplay: day + '/' + month + '/' + year,
     open: {
       count: 0,
       critical: 0,
@@ -42,7 +46,8 @@ function processQuery(req, res) {
         var filter = "project = ace AND status not in (closed, verified)" +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
           "AND priority in (blocker, critical) AND type in (bug)" +
-          "AND (updated> " + parsedDate + ") ORDER BY created DESC";
+          "AND CREATED >= " + parsedDate + " AND CREATED <=" + parsedTomorrow
+          + " ORDER BY created DESC";
         var path = jiraUrl + searchApiPath + filter;
         console.log(path);
         //Query jira for open bugs

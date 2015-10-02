@@ -2,6 +2,8 @@
 Test platform reporting module, provides historical data stored in mongodb ,which
 has been collected from jira. This module is built with nodejs and is a simple
 service that provides data and stores data using REST.
+## Install
+npm install
 ## To run test
  type mocha
 ## To run service

@@ -98,8 +98,7 @@
       });
 
       x.domain(data.map(function(d) {
-        console.log(d.defects);
-        return d.date;
+        return d.dateDisplay;
       }));
       y.domain([0, d3.max(data, function(d) {
         return d.total;
@@ -131,7 +130,7 @@
         .enter().append("g")
         .attr("class", "g")
         .attr("transform", function(d) {
-          return "translate(" + x(d.date) + ",0)";
+          return "translate(" + x(d.dateDisplay) + ",0)";
         });
 
       state.selectAll("rect")

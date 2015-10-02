@@ -30,8 +30,10 @@ router.get('/api/alfresco/:version', processQuery);
  */
 function processQuery(req, res) {
   var version = req.params.version;
+  var today = new Date();
   var json = {
-    date: new Date().toLocaleDateString(),
+    date: today,
+    dateDisplay: today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear(),
     open: {
       count: 0,
       critical: 0,
@@ -158,7 +160,7 @@ function processQuery(req, res) {
  */
 router.get('/api/alfresco/:version/status', function(req, res) {
   var name = req.params.version;
-  db.collection('report').find({}).toArray(function(err, result) {
+  db.collection('report').find({}).sort({date:1}).toArray(function(err, result) {
     if (err) throw err;
     res.send(result);
   });
