@@ -47,8 +47,8 @@
       .rangeRound([height, 0]);
 
     var color = d3.scale.ordinal()
-      .domain(['Closed Critical', 'Closed Blocker', 'Open Critical', 'Open Blocker'])
-      .range(["#66cc00", "#008000", "#FF3333", "#cc0000"]);
+      .domain(['Open Critical', 'Open Blocker'])
+      .range(["#FF3333", "#cc0000"]);
 
     var xAxis = d3.svg.axis()
       .scale(x)
