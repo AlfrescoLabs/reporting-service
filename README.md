@@ -9,8 +9,8 @@ service that provides data and stores data using REST.
 ## Implemented APIs ##
  * Get open and closed defects from JIRA for a given day and store it.
  * Show all defects for the product release.
-## Examples ##
-### Get all open defects for product release ###
+## Examples
+### Get all open defects for product release 
 http://localhost:3000/reporting/api/alfresco/5.1/status
 expected result:
 
