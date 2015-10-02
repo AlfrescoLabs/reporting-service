@@ -2,15 +2,15 @@
 Test platform reporting module, provides historical data stored in mongodb ,which
 has been collected from jira. This module is built with nodejs and is a simple
 service that provides data and stores data using REST.
-### To run test
+## To run test
  type mocha
-### To run service
+## To run service
  node app.js
-## Implemented APIs ##
+## Implemented APIs
  * Get open and closed defects from JIRA for a given day and store it.
  * Show all defects for the product release.
 ## Examples
-### Get all open defects for product release 
+### Get all open defects for product release
 http://localhost:3000/reporting/api/alfresco/5.1/status
 expected result:
 
