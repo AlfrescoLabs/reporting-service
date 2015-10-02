@@ -22,9 +22,7 @@
       fill: steelblue;
     }
 
-    .x.axis path {
-      display: none;
-    }
+
   </style>
 </head>
 
@@ -34,7 +32,7 @@
     var margin = {
         top: 20,
         right: 20,
-        bottom: 55,
+        bottom: 70,
         left: 40
       },
       width = 960 - margin.left - margin.right,
@@ -51,13 +49,15 @@
       .range(["#FF3333", "#cc0000"]);
 
     var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
+        .scale(x)
+        .orient("bottom")
+        .ticks(20, ",.1s")
+        .tickSize(6, 0);
 
     var yAxis = d3.svg.axis()
       .scale(y)
-      .orient("left")
-      .tickFormat(d3.format(".2s"));
+      .orient("left").tickFormat(d3.format("d"));
+      // .tickFormat(d3.format(".r"));
 
     var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -118,12 +118,12 @@
       svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Bug count");
+        // .append("text")
+        // .attr("transform", "rotate(-90)")
+        // .attr("y", 6)
+        // .attr("dy", ".71em")
+        // .style("text-anchor", "end")
+        // .text("Bug count");
 
       var state = svg.selectAll(".date")
         .data(data)
