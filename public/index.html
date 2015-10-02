@@ -1,147 +1,179 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
+<html>
 
-body {
-  font: 10px sans-serif;
-}
+<head>
+  <title>
+    Stacked defect graph
+  </title>
+  <style>
+    body {
+      font: 10px sans-serif;
+    }
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
 
-.bar {
-  fill: steelblue;
-}
+    .bar {
+      fill: steelblue;
+    }
 
-.x.axis path {
-  display: none;
-}
+    .x.axis path {
+      display: none;
+    }
+  </style>
+</head>
 
-</style>
 <body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-<script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script>
+    var margin = {
+        top: 20,
+        right: 20,
+        bottom: 55,
+        left: 40
+      },
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    var x = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+    var y = d3.scale.linear()
+      .rangeRound([height, 0]);
 
-var y = d3.scale.linear()
-    .rangeRound([height, 0]);
+    var color = d3.scale.ordinal()
+      .domain(['Closed Critical', 'Closed Blocker', 'Open Critical', 'Open Blocker'])
+      .range(["#66cc00", "#008000", "#FF3333", "#cc0000"]);
 
-var color = d3.scale.ordinal()
-    .domain(['Closed Critical','Closed Blocker','Open Critical','Open Blocker'])
-    .range(["#66cc00", "#008000", "#FF3333", "#cc0000"]);
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
 
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(d3.format(".2s"));
+    var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.json('reporting/api/alfresco/5.1/status', function(error, data) {
-  if (error) {
-    console.log(error);
-    throw error;
-  }
+    d3.json('reporting/api/alfresco/5.1/status', function(error, data) {
+      if (error) {
+        console.log(error);
+        throw error;
+      }
 
 
-  data.forEach(function(d) {
-    var y0 = 0;
-    d.defects = color.domain().map(function(name) {
-       var value = 0;
-       if(name === 'Closed Critical'){
-         value = d.close.critical;
-       }
-       if(name === 'Open Critical'){
-         value = d.open.critical;
-       }
-       if(name === 'Closed Blocker'){
-         value = d.close.blocker;
-       }
-       if(name === 'Open Blocker'){
-         value = d.open.blocker;
-       }
-       return {name: name, y0: y0, y1: y0 += value};
+      data.forEach(function(d) {
+        var y0 = 0;
+        d.defects = color.domain().map(function(name) {
+          var value = 0;
+          if (name === 'Closed Critical') {
+            value = d.close.critical;
+          }
+          if (name === 'Open Critical') {
+            value = d.open.critical;
+          }
+          if (name === 'Closed Blocker') {
+            value = d.close.blocker;
+          }
+          if (name === 'Open Blocker') {
+            value = d.open.blocker;
+          }
+          return {
+            name: name,
+            y0: y0,
+            y1: y0 += value
+          };
+        });
+        d.total = d.defects[d.defects.length - 1].y1;
+      });
+
+      x.domain(data.map(function(d) {
+        console.log(d.defects);
+        return d.date;
+      }));
+      y.domain([0, d3.max(data, function(d) {
+        return d.total;
+      })]);
+
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(90)")
+        .style("text-anchor", "start");
+
+      svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Bug count");
+
+      var state = svg.selectAll(".date")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "g")
+        .attr("transform", function(d) {
+          return "translate(" + x(d.date) + ",0)";
+        });
+
+      state.selectAll("rect")
+        .data(function(d) {
+          return d.defects;
+        })
+        .enter().append("rect")
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) {
+          return y(d.y1);
+        })
+        .attr("height", function(d) {
+          return y(d.y0) - y(d.y1);
+        })
+        .style("fill", function(d) {
+          return color(d.name);
+        });
+
+      var legend = svg.selectAll(".legend")
+        .data(color.domain().slice().reverse())
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) {
+          return "translate(0," + i * 20 + ")";
+        });
+
+      legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
+
+      legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) {
+          return d;
+        });
+
     });
-    d.total = d.defects[d.defects.length - 1].y1;
-  });
+  </script>
 
-  x.domain(data.map(function(d) {
-    console.log(d.defects);
-    return d.date;}));
-  y.domain([0, d3.max(data, function(d) { return d.total; })]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .selectAll("text")
-      .attr("y", 0)
-      .attr("x", 9)
-      .attr("dy", ".35em")
-      .attr("transform", "rotate(90)")
-      .style("text-anchor", "start");
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Bug count");
-
-  var state = svg.selectAll(".date")
-      .data(data)
-    .enter().append("g")
-      .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x(d.date) + ",0)"; });
-
-  state.selectAll("rect")
-      .data(function(d) { return d.defects; })
-    .enter().append("rect")
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.y1); })
-      .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-      .style("fill", function(d) { return color(d.name); });
-
-  var legend = svg.selectAll(".legend")
-      .data(color.domain().slice().reverse())
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-  legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
-
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d; });
-
-});
-
-</script>
+</html>
