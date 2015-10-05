@@ -16,7 +16,7 @@ describe('reporting/api/alfresco/5.1', function() {
       var today = new Date();
       var parsedDate =  today.getDate()+ "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear();
       db.collection('report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
-        result.length.should.be.below(2);
+        should(1).be.equal(result.length);
         verifyModel(result[0]);
         done();
       });
@@ -30,6 +30,7 @@ describe('reporting/api/alfresco/5.1/status', function() {
         assert.ifError(err);
         assert(res.status === 200);
         var response = res.body;
+
         var json = response[0];
         json.should.have.property('date');
         json.open.should.have.property('blocker');
@@ -70,8 +71,8 @@ function verifyModel(json){
   json.should.have.property('close');
   json.close.should.have.property('count');
   json.close.should.have.property('issues');
-  var issues = json.close.issues;
-  issues[0].should.have.property('id');
-  issues[0].should.have.property('link');
-  issues[0].should.have.property('type');
+//   var issues = json.close.issues;
+//   issues[0].should.have.property('id');
+//   issues[0].should.have.property('link');
+//   issues[0].should.have.property('type');
 }

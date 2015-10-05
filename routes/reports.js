@@ -26,21 +26,28 @@ router.get('/api/jira/:issue', function(req, res) {
   });
 });
 
+router.get('/api/alfresco/:version/:day/:month/:year', processQuery);
 router.get('/api/alfresco/:version', processQuery);
 /**
  * Get open bug list and populate db.
  */
 function processQuery(req, res) {
   var version = req.params.version;
-  var today = new Date();
-  var parsedDate = today.getFullYear() + "-" + (new Number(today.getMonth()) + 1) + "-" + today.getDate();
-  var tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  var targetDate = new Date();
+  var day = req.params.day;
+  var month = req.params.month;
+  var year = req.params.year;
+  if(typeof day !== 'undefined' && typeof month !== 'undefined' && typeof year !== 'undefined' ){
+      targetDate = new Date(year,month -1, day, 0,0,0,0);
+  }
+  var parsedDate = targetDate.getFullYear() + "-" + (new Number(targetDate.getMonth()) + 1) + "-" + targetDate.getDate();
+  var tomorrow = new Date(targetDate);
+  tomorrow.setDate(targetDate.getDate() + 1);
   var parsedTomorrow = tomorrow.getFullYear() + "-" + (new Number(tomorrow.getMonth()) + 1) + "-" + tomorrow.getDate();
   //The data model
   var json = {
-    date: today.getTime(),
-    dateDisplay: today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear(),
+    date: targetDate.getTime(),
+    dateDisplay: targetDate.getDate() + '/' + (targetDate.getMonth()+1) + '/' + targetDate.getFullYear(),
     open: {
       count: 0,
       critical: 0,
@@ -80,7 +87,6 @@ function processQuery(req, res) {
           var data = JSON.parse(body);
           json.open.count = data.total;
           var issues = data.issues;
-
             if(issues === 'undefined'){
             issues.map(function(issue) {
               var item = {
