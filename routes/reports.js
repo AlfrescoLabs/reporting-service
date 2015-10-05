@@ -165,7 +165,16 @@ function processQuery(req, res) {
     }
   )
 }
-
+/**
+ * Get new defects found per day from backend
+ */
+router.get('/api/alfresco/:version/new/defects', function(req, res) {
+  var name = req.params.version;
+  db.collection('report').find({},{"date":1, "dateDisplay":1 ,"open":1}).sort({date:1}).toArray(function(err, result) {
+    if (err) throw err;
+    res.send(result);
+  });
+});
 /**
  * Get status of release from db.
  */
