@@ -2,12 +2,16 @@
   "name": "report-service",
   "version": "1.0.0",
   "description": "Test platform reporting service.",
-  "main": "index.js",
+  "main": "app.js",
+  "repository" :{
+    "type" : "git",
+    "url" : "https://github.com/AlfrescoTestAutomation/reporting-service.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\""
   },
   "author": "Michael Suzuki",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.13.3",
