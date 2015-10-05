@@ -6,21 +6,22 @@ var app = require('../app');
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 
 
-// describe('reporting/api/alfresco/5.1', function() {
-//     this.timeout(15000); // Setting a longer timeout
-//     it('Should get data and store only one entery per day',function(done){
-//       this.timeout(15000); // Setting a longer timeout
-//       //Call api to update backend twice
-//       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
-//       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
-//       var today = new Date().toLocaleDateString();
-//       db.collection('report').find({date:today}).toArray(function(err, result) {
-//         result.length.should.be.below(2);
-//         verifyModel(result[0]);
-//         done();
-//       });
-//     });
-// });
+describe('reporting/api/alfresco/5.1', function() {
+    this.timeout(15000); // Setting a longer timeout
+    it('Should get data and store only one entery per day',function(done){
+      this.timeout(15000); // Setting a longer timeout
+      //Call api to update backend twice
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
+      var today = new Date();
+      var parsedDate =  today.getDate()+ "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear();
+      db.collection('report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
+        result.length.should.be.below(2);
+        verifyModel(result[0]);
+        done();
+      });
+    });
+});
 
 describe('reporting/api/alfresco/5.1/status', function() {
   it('should return open and closed jira issues from mongo', function(done) {

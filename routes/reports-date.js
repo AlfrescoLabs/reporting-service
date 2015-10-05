@@ -138,7 +138,7 @@ function processQuery(req, res) {
       //store it to mongodb
       report = db.collection('report');
       report.update({
-        date: json.date
+        dateDisplay: json.dateDisplay
       }, json, {
         upsert: true
       }, function(err, result) {

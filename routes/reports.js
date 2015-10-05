@@ -33,9 +33,13 @@ router.get('/api/alfresco/:version', processQuery);
 function processQuery(req, res) {
   var version = req.params.version;
   var today = new Date();
+  var parsedDate = today.getFullYear() + "-" + (new Number(today.getMonth()) + 1) + "-" + today.getDate();
+  var tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  var parsedTomorrow = tomorrow.getFullYear() + "-" + (new Number(tomorrow.getMonth()) + 1) + "-" + tomorrow.getDate();
   //The data model
   var json = {
-    date: today,
+    date: today.getTime(),
     dateDisplay: today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear(),
     open: {
       count: 0,
@@ -50,19 +54,12 @@ function processQuery(req, res) {
       issues: []
     }
   };
-  //http request
 
   async.parallel([
       /**
        * Get open bugs and populate json object.
        */
       function getOpenBugs(callback) {
-        var today = new Date();
-        var parsedDate = today.getFullYear() + "-" + (new Number(today.getMonth()) + 1) + "-" + today.getDate();
-        var tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        var parsedTomorrow = tomorrow.getFullYear() + "-" + (new Number(tomorrow.getMonth()) + 1) + "-" + tomorrow.getDate();
-
         var filter = "project = ace " +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
           "AND priority in (blocker, critical) AND type in (bug)" +
@@ -125,7 +122,7 @@ function processQuery(req, res) {
           json.close.count = data.total;
 
           var issues = data.issues;
-          console.log(issues)
+
           if(issues === 'undefined'){
             issues.map(function(issue) {
               var item = {
@@ -148,7 +145,7 @@ function processQuery(req, res) {
     ],
 
     /*
-     * Send collated result
+     * Store and send collated result
      */
     function display(err, results) {
       if (err) {
@@ -159,7 +156,7 @@ function processQuery(req, res) {
       //store it to mongodb
       report = db.collection('report');
       report.update({
-        date: json.date
+        dateDisplay: json.dateDisplay
       }, json, {
         upsert: true
       }, function(err, result) {
