@@ -3,7 +3,7 @@ var request = require('request'); //http request
 var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 var router = express.Router();
 var async = require('async'); //async lib
-var jiraUrl = 'https://issuestest.alfresco.com';
+var jiraUrl = 'https://issues.alfresco.com';
 var searchApiPath = '/jira/rest/api/2/search?jql=';
 
 router.get('/api/alfresco/:version/:day/:month/:year', processQuery);
@@ -38,20 +38,28 @@ function processQuery(req, res) {
       issues: []
     }
   };
+
   async.parallel([
       /**
        * Get open bugs and populate json object.
        */
       function getOpenBugs(callback) {
-        var filter = "project = ace AND status not in (closed, verified)" +
+
+        var filter = "project = ace " + //AND status not in (closed, verified)" +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
-          "AND priority in (blocker, critical) AND type in (bug)" +
-          "AND CREATED >= " + parsedDate + " AND CREATED <=" + parsedTomorrow
+          "AND priority in (blocker, critical) AND type in (bug) " +
+          "AND CREATED >= " + parsedDate + " AND CREATED <= " + parsedTomorrow
           + " ORDER BY created DESC";
         var path = jiraUrl + searchApiPath + filter;
-        console.log(path);
+        var option = {
+          url: path,
+          headers : {
+                  'Authorization' : 'Basic bXN1enVraTpuQkd4aTU4NA=='
+              }
+        }
+        console.log(option)
         //Query jira for open bugs
-        request(path, function(err, response, body) {
+        request(option, function(err, response, body) {
           // JSON body
           if (err) {
             console.log(err);
