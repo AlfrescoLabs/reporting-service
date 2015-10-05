@@ -95,7 +95,7 @@ function processQuery(req, res) {
       /**
        * Get closed bugs and populate json object.
        */
-      function getCloseBugs(callback) {
+      function getClosedBugs(callback) {
         var filter = "project = ace AND status in (closed, verified)" +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
           "AND priority in (blocker, critical) AND type in (bug)" +
