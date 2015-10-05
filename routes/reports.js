@@ -28,8 +28,7 @@ router.get('/api/jira/:issue', function(req, res) {
 
 router.get('/api/alfresco/:version', processQuery);
 /**
- * Get open bug list using alfresco release query.
- * Result is streamed back as json object.
+ * Get open bug list and populate db.
  */
 function processQuery(req, res) {
   var version = req.params.version;
@@ -84,10 +83,23 @@ function processQuery(req, res) {
           var data = JSON.parse(body);
           json.open.count = data.total;
           var issues = data.issues;
-          if(issues === 'undefined'){
-            callback(true);
-          }
 
+            if(issues === 'undefined'){
+            issues.map(function(issue) {
+              var item = {
+                id: issue.key,
+                link: issue.self,
+                type: issue.fields.priority.name
+              };
+              if (item.type === 'Blocker') {
+                json.open.blocker ++;
+              }
+              if (item.type === 'Critical') {
+                json.open.critical ++;
+              }
+              json.close.issues.push(item);
+            });
+          }
           callback(false);
         });
       },
@@ -99,8 +111,8 @@ function processQuery(req, res) {
         var filter = "project = ace AND status in (closed, verified)" +
           "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
           "AND priority in (blocker, critical) AND type in (bug)" +
-          // "AND created >= " + " AND created <= "
-          + "ORDER BY created DESC";
+          "AND (updated> " + parsedDate + ") ORDER BY created DESC";
+
         var path = jiraUrl + searchApiPath + filter;
         //Query jira for open bugs
         request(path, function(err, response, body) {
@@ -112,34 +124,32 @@ function processQuery(req, res) {
           var data = JSON.parse(body);
           json.close.count = data.total;
 
-          if(issues === undefined){
-            callback(true);
-            return;
-          }
           var issues = data.issues;
-
-          issues.map(function(issue) {
-            var item = {
-              id: issue.key,
-              link: issue.self,
-              type: issue.fields.priority.name
-            };
-            if (item.type === 'Blocker') {
-              json.close.blocker++;
-            }
-            if (item.type === 'Critical') {
-              json.close.critical++;
-            }
-            json.close.issues.push(item);
-          });
+          console.log(issues)
+          if(issues === 'undefined'){
+            issues.map(function(issue) {
+              var item = {
+                id: issue.key,
+                link: issue.self,
+                type: issue.fields.priority.name
+              };
+              if (item.type === 'Blocker') {
+                json.close.blocker++;
+              }
+              if (item.type === 'Critical') {
+                json.close.critical++;
+              }
+              json.close.issues.push(item);
+            });
+          }
           callback(false);
         });
       }
     ],
+
     /*
      * Send collated result
      */
-
     function display(err, results) {
       if (err) {
         console.log(err);
@@ -186,11 +196,5 @@ router.get('/api/alfresco/:version/status', function(req, res) {
   });
 });
 
-/**
- * Display graph.
- */
-router.get('/api/alfresco/:version/graph', function(req, res) {
-  res.sendFile(path.join(__dirname + '/index.html'));
-});
 
 module.exports = router;
