@@ -5,9 +5,9 @@ service that provides data and stores data using REST.
 ## Install
 npm install
 ## To run test
- type mocha
+npm test
 ## To run service
- node app.js
+npm start
 ## Implemented APIs
  * Get open and closed defects from JIRA for a given day and store it.
  * Show all defects for the product release.
