@@ -16,7 +16,7 @@ describe('reporting/api/alfresco/5.1', function() {
       var parsedDate =  today.getDate()+ "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear();
       db.collection('report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
         should(1).be.equal(result.length);
-        verifyModel(result[0]);
+        verifyModel(result[0].open)
         done();
       });
     });
@@ -42,7 +42,6 @@ describe('reporting/api/alfresco/5.1/01/01/2015', function() {
     function verifyDB(parsedDate){
       db.collection('report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
       should(1).be.equal(result.length);
-      verifyModel(result[0]);
       })
     }
 });
@@ -57,13 +56,9 @@ describe('reporting/api/alfresco/5.1/status', function() {
         //Skip first result as it will be data from a negative test.
         var json = response[1];
         json.should.have.property('date');
-        json.open.should.have.property('blocker');
-        json.open.should.have.property('critical');
-        should.equal(json.open.critical+json.open.blocker, json.open.count)
-        json.close.should.have.property('blocker');
-        json.close.should.have.property('critical');
-        should.equal(json.close.critical+json.close.blocker, json.close.count)
-        verifyModel(json);
+        json.should.have.property('dateDisplay');
+        verifyModel(json.open);
+        verifyModel(json.close);
         done();
       });
   });
@@ -89,14 +84,17 @@ describe('reporting/api/alfresco/5.1/new/defects', function() {
   });
 });
 function verifyModel(json){
-  json.should.have.property('open');
-  json.open.should.have.property('count');
-  json.open.should.have.property('issues');
-  json.should.have.property('close');
-  json.close.should.have.property('count');
-  json.close.should.have.property('issues');
-//   var issues = json.close.issues;
-//   issues[0].should.have.property('id');
-//   issues[0].should.have.property('link');
-//   issues[0].should.have.property('type');
+  json.should.have.property('count');
+  json.should.have.property('critical');
+  json.should.have.property('blocker');
+  json.should.have.property('issues');
+  var issues = json.issues;
+  if(typeof issues !== 'undefined'){
+    should.equal(json.critical+json.blocker, json.count)
+    issues[0].should.have.property('id');
+    issues[0].should.have.property('link');
+    issues[0].should.have.property('type');
+  } else {
+    should.equal(0, json.count)
+  }
 }

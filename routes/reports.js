@@ -87,7 +87,7 @@ function processQuery(req, res) {
           var data = JSON.parse(body);
           json.open.count = data.total;
           var issues = data.issues;
-            if(issues === 'undefined'){
+            if(typeof issues !== 'undefined'){
             issues.map(function(issue) {
               var item = {
                 id: issue.key,
@@ -100,7 +100,7 @@ function processQuery(req, res) {
               if (item.type === 'Critical') {
                 json.open.critical ++;
               }
-              json.close.issues.push(item);
+              json.open.issues.push(item);
             });
           }
           callback(false);
@@ -129,7 +129,7 @@ function processQuery(req, res) {
 
           var issues = data.issues;
 
-          if(issues === 'undefined'){
+          if(typeof issues !== 'undefined'){
             issues.map(function(issue) {
               var item = {
                 id: issue.key,
@@ -137,10 +137,10 @@ function processQuery(req, res) {
                 type: issue.fields.priority.name
               };
               if (item.type === 'Blocker') {
-                json.close.blocker++;
+                json.close.blocker ++;
               }
               if (item.type === 'Critical') {
-                json.close.critical++;
+                json.close.critical ++;
               }
               json.close.issues.push(item);
             });
@@ -171,7 +171,6 @@ function processQuery(req, res) {
           res.status(500).send('DB error');
         }
         if (result) {
-          console.log('Added record');
           res.send(json)
         }
       });
