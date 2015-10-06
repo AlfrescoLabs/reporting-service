@@ -7,10 +7,9 @@ var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
 
 
 describe('reporting/api/alfresco/5.1', function() {
-    this.timeout(15000); // Setting a longer timeout
     it('Should get data and store only one entery per day',function(done){
       this.timeout(15000); // Setting a longer timeout
-      //Call api to update backend twice
+      //Call api to update backend twice, expect one entry as this as an upsert op.
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end();
       var today = new Date();
@@ -22,6 +21,31 @@ describe('reporting/api/alfresco/5.1', function() {
       });
     });
 });
+describe('reporting/api/alfresco/5.1/01/01/2015', function() {
+    it('Should only have 1 entery per given date',function(done){
+      this.timeout(15000); // Setting a longer timeout
+      var targetDate = new Date(2015, 0, 01, 0, 0, 0, 0)
+      var parsedDate =  targetDate.getDate()+ "/" + (new Number(targetDate.getMonth()) + 1) + "/" + targetDate.getFullYear()
+      //Call api to update backend twice, expect one entry as this as an upsert op.
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/01/01/2015').end(function(err,res){
+        assert(res.status === 200);
+        should.equal('1/1/2015', res.body.dateDisplay);
+        verifyDB(parsedDate)
+      })
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/1/1/2015').end(function(err,res){
+        assert(res.status === 200);
+        should.equal('1/1/2015', res.body.dateDisplay);
+        verifyDB(parsedDate)
+        done()
+      })
+    })
+    function verifyDB(parsedDate){
+      db.collection('report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
+      should(1).be.equal(result.length);
+      verifyModel(result[0]);
+      })
+    }
+});
 
 describe('reporting/api/alfresco/5.1/status', function() {
   it('should return open and closed jira issues from mongo', function(done) {
@@ -30,8 +54,8 @@ describe('reporting/api/alfresco/5.1/status', function() {
         assert.ifError(err);
         assert(res.status === 200);
         var response = res.body;
-
-        var json = response[0];
+        //Skip first result as it will be data from a negative test.
+        var json = response[1];
         json.should.have.property('date');
         json.open.should.have.property('blocker');
         json.open.should.have.property('critical');
