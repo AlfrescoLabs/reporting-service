@@ -1,11 +1,13 @@
-var express = require('express');
-var request = require('request'); //http request
-var db = require('mongoskin').db('mongodb://localhost:27017/testplatform');
-var router = express.Router();
-var async = require('async'); //async lib
-var jiraUrl = 'https://issues.alfresco.com';
+var express = require('express')
+var request = require('request') //http request
+var config = require('../config')
+var db = require('mongoskin').db(config.mongo)
+var router = express.Router()
+var async = require('async') //async lib
+var jiraUrl = config.jira.url;
+
 var searchApiPath = '/jira/rest/api/2/search?jql=';
-var headers = { "Authorization" : "Basic bXN1enVraTpuQkd4aTU4NA==" };
+var headers = { "Authorization" : config.jira.authentication};
 
 router.get('/reporting/api', function(req, res) {
   res.send("Welcome to reporting");

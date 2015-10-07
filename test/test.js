@@ -3,8 +3,9 @@ var expect = require('expect')
 var superagent = require('superagent')
 var should = require('should')
 var app = require('../app')
-var db = require('mongoskin').db('mongodb://localhost:27017/testplatform')
-
+var config = require('../config')
+console.log(config)
+var db = require('mongoskin').db(config.mongo)
 
 describe('reporting/api/alfresco/5.1', function() {
     it('Should get data and store only one entery per day',function(done){
