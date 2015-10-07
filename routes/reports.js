@@ -55,12 +55,6 @@ function processQuery(req, res) {
       critical: 0,
       blocker: 0,
       issues: []
-    },
-    close: {
-      count: 0,
-      critical: 0,
-      blocker: 0,
-      issues: []
     }
   };
 
@@ -103,48 +97,6 @@ function processQuery(req, res) {
                 json.open.critical ++;
               }
               json.open.issues.push(item);
-            });
-          }
-          callback(false);
-        });
-      },
-
-      /**
-       * Get closed bugs and populate json object.
-       */
-      function getClosedBugs(callback) {
-        var filter = "project = ace AND status in (closed, verified)" +
-          "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
-          "AND priority in (blocker, critical) AND type in (bug)" +
-          "AND (updated> " + parsedDate + ") ORDER BY created DESC";
-
-        var path = jiraUrl + searchApiPath + filter;
-        //Query jira for open bugs
-        request(path, function(err, response, body) {
-          if (err) {
-            console.log(err);
-            callback(true);
-            return;
-          }
-          var data = JSON.parse(body);
-          json.close.count = data.total;
-
-          var issues = data.issues;
-
-          if(typeof issues !== 'undefined'){
-            issues.map(function(issue) {
-              var item = {
-                id: issue.key,
-                link: issue.self,
-                type: issue.fields.priority.name
-              };
-              if (item.type === 'Blocker') {
-                json.close.blocker ++;
-              }
-              if (item.type === 'Critical') {
-                json.close.critical ++;
-              }
-              json.close.issues.push(item);
             });
           }
           callback(false);

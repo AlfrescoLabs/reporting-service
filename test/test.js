@@ -59,7 +59,6 @@ describe('reporting/api/alfresco/5.1/status', function() {
         json.should.have.property('date')
         json.should.have.property('dateDisplay')
         verifyModel(json.open)
-        verifyModel(json.close)
         done()
       });
   });
@@ -75,7 +74,6 @@ describe('reporting/api/alfresco/5.1/new/defects', function() {
         json.should.have.property('date')
         should.not.exist(json.close)
         json.should.have.property('open')
-
         verifyModel(json.open)
         done()
       });
