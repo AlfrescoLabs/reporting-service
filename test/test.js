@@ -4,7 +4,6 @@ var superagent = require('superagent')
 var should = require('should')
 var app = require('../app')
 var config = require('../config')
-console.log(config)
 var db = require('mongoskin').db(config.mongo)
 var async = require('async')
 
@@ -41,7 +40,6 @@ describe('reporting/api/alfresco/5.1', function() {
     });
 });
 describe('reporting/api/alfresco/5.1/01/01/2015', function() {
-
     it('Should only have 1 entery per given date',function(done){
       this.timeout(15000); // Setting a longer timeout
       var targetDate = new Date(2015, 0, 01, 0, 0, 0, 0)
@@ -72,7 +70,6 @@ after(function(done){
 });
 
 describe('reporting/api/alfresco/5.1/status', function() {
-
   it('should return open and closed jira issues from mongo', function(done) {
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/status').end(
       function(err, res) {
@@ -89,7 +86,6 @@ describe('reporting/api/alfresco/5.1/status', function() {
   });
 });
 describe('reporting/api/alfresco/5.1/new/defects', function() {
-
   it('should only return open jira issues from mongo', function(done) {
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/new/defects').end(
       function(err, res) {
@@ -105,6 +101,7 @@ describe('reporting/api/alfresco/5.1/new/defects', function() {
       });
   });
 });
+
 function verifyModel(json){
   json.should.have.property('count')
   json.should.have.property('critical')
