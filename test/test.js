@@ -6,13 +6,31 @@ var app = require('../app')
 var config = require('../config')
 console.log(config)
 var db = require('mongoskin').db(config.mongo)
+var async = require('async')
 
+before(function(done){
+  this.timeout(15000); // Setting a longer timeout
+  //Call api to update backend twice, expect one entry as this as an upsert op.
+  async.parallel([
+    function callApi(callback){
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(function(err,res){
+        assert(res.status === 200)
+        callback()
+      })
+    }
+    ,
+    function callApi2nd(callback){
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(function(err,res){
+        assert(res.status === 200)
+        callback()
+      })
+    }],
+    function(){
+      done()
+    })
+})
 describe('reporting/api/alfresco/5.1', function() {
     it('Should get data and store only one entery per day',function(done){
-      this.timeout(15000); // Setting a longer timeout
-      //Call api to update backend twice, expect one entry as this as an upsert op.
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end()
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end()
       var today = new Date()
       var parsedDate =  today.getDate()+ "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
       db.collection('report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
@@ -23,6 +41,7 @@ describe('reporting/api/alfresco/5.1', function() {
     });
 });
 describe('reporting/api/alfresco/5.1/01/01/2015', function() {
+
     it('Should only have 1 entery per given date',function(done){
       this.timeout(15000); // Setting a longer timeout
       var targetDate = new Date(2015, 0, 01, 0, 0, 0, 0)
@@ -45,9 +64,15 @@ describe('reporting/api/alfresco/5.1/01/01/2015', function() {
       should(1).be.equal(result.length)
       })
     }
+})
+after(function(done){
+	db.dropDatabase(function(){
+    done();
+	});
 });
 
 describe('reporting/api/alfresco/5.1/status', function() {
+
   it('should return open and closed jira issues from mongo', function(done) {
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/status').end(
       function(err, res) {
@@ -64,6 +89,7 @@ describe('reporting/api/alfresco/5.1/status', function() {
   });
 });
 describe('reporting/api/alfresco/5.1/new/defects', function() {
+
   it('should only return open jira issues from mongo', function(done) {
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/new/defects').end(
       function(err, res) {
