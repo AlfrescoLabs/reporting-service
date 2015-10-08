@@ -69,9 +69,9 @@ after(function(done){
 	});
 });
 
-describe('reporting/api/alfresco/5.1/new/defects', function() {
+describe('reporting/api/alfresco/5.1/defects', function() {
   it('should only return open jira issues from mongo', function(done) {
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/new/defects').end(
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects').end(
       function(err, res) {
         assert.ifError(err)
         assert(res.status === 200)

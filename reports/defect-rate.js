@@ -13,7 +13,7 @@ module.exports = {
   /**
    * Gets defects stroed in db
    */
-  getNewDefects: function(req, res) {
+  getDefects: function(req, res) {
     var name = req.params.version;
     db.collection('report').find({}, {
       "date": 1,
