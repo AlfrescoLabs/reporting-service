@@ -69,22 +69,6 @@ after(function(done){
 	});
 });
 
-describe('reporting/api/alfresco/5.1/status', function() {
-  it('should return open and closed jira issues from mongo', function(done) {
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/status').end(
-      function(err, res) {
-        assert.ifError(err)
-        assert(res.status === 200)
-        var response = res.body
-        //Skip first result as it will be data from a negative test.
-        var json = response[1]
-        json.should.have.property('date')
-        json.should.have.property('dateDisplay')
-        verifyModel(json.open)
-        done()
-      });
-  });
-});
 describe('reporting/api/alfresco/5.1/new/defects', function() {
   it('should only return open jira issues from mongo', function(done) {
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/new/defects').end(
