@@ -102,3 +102,40 @@ function verifyModel(json){
     should.equal(0, json.count)
   }
 }
+//////////////////// Defect Trend test
+describe('reporting/api/alfresco/5.1/defect/trend', function(done) {
+  it('Should get data and store only one entery per day', function(done) {
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end(function(err, res) {
+      assert(res.status === 200)
+      var today = new Date()
+      var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
+      db.collection('report').find({
+        'dateDisplay': parsedDate
+      }).toArray(function(err, result) {
+        should(1).be.equal(result.length)
+        verifyModel(result[0].open)
+        done()
+      });
+    });
+  })
+})
+
+describe('reporting/api/alfresco/5.1/trend',function(done){
+  it('should display results from db',function(done){
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/trend').end(
+      function(err, res) {
+        assert.ifError(err)
+        assert(res.status === 200)
+        var response = res.body
+        var json = response[0]
+        json.should.have.property('date')
+        should.not.exist(json.close)
+        json.should.have.property('open')
+        verifyModel(json.open)
+        json.should.have.property('triaged')
+        verifyModel(json.triaged)
+        should.equal(json.total, new Number(json.open.count) + new Number(json.triaged.count))
+        done()
+      });
+  })
+})

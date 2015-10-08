@@ -16,9 +16,9 @@ module.exports = {
   getDefects: function(req, res) {
     var name = req.params.version;
     db.collection('report').find({}, {
-      "date": 1,
-      "dateDisplay": 1,
-      "open": 1
+      "date" : 1,
+      "dateDisplay" : 1,
+      "open" : 1
     }).sort({
       date: 1
     }).toArray(function(err, result) {

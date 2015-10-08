@@ -14,7 +14,7 @@ router.get('/api/alfresco/:version', report.updateDefects)
  */
 router.get('/api/alfresco/:version/defects', report.getDefects)
 // Routes to defect trend
-router.get('/api/alfresco/:version/defect/trend/:day/:month/:year', trend.getDefectTrend);
-router.get('/api/alfresco/:version/defect/trend', trend.getDefectTrend);
-router.get('/api/alfresco/:version/trend')
+router.get('/api/alfresco/:version/defect/trend/:day/:month/:year', trend.updateDefectTrend);
+router.get('/api/alfresco/:version/defect/trend', trend.updateDefectTrend);
+router.get('/api/alfresco/:version/trend',trend.getDefectTrend)
 module.exports = router
