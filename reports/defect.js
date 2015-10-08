@@ -6,10 +6,23 @@ var jiraUrl = config.jira.url;
 var searchApiPath = '/jira/rest/api/2/search?jql=';
 var headers = { "Authorization" : config.jira.authentication};
 
+module.exports = {
+
+/**
+ * Gets defects stroed in db
+ */
+getNewDefects : function(req, res) {
+  var name = req.params.version;
+  db.collection('report').find({},{"date":1, "dateDisplay":1 ,"open":1}).sort({date:1}).toArray(function(err, result) {
+    if (err) throw err;
+    res.send(result);
+  }
+)},
+
 /**
  * Get open bug list and populate db.
  */
-function getOpenDefects(req, res) {
+updateDefects : function (req, res) {
   var version = req.params.version;
   var targetDate = new Date();
   var day = req.params.day;
@@ -106,4 +119,5 @@ function getOpenDefects(req, res) {
       });
     })
   }
-module.exports = getOpenDefects;
+
+}

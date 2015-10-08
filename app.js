@@ -1,6 +1,6 @@
 var express = require('express')                        // Web framework
 var bodyParser = require('body-parser')                 //Pulls information from HTML post
-var path = require("path");                             //System path
+var path = require('path');                             //System path
 var routes = require('./routes/main')                // Application routes
 var trend = require('./reports/trend')
 var app = express()
