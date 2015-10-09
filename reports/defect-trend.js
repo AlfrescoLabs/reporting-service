@@ -62,8 +62,7 @@ module.exports = {
           "maxResults": 1000
         }
       }
-      console.log(option)
-        //Query jira for open bugs
+      //Query jira for open bugs
       request.post(option, function(err, response, body) {
         if (err) {
           console.log(err)
@@ -134,6 +133,7 @@ module.exports = {
         }
         if (result) {
           res.send(model)
+
         }
       });
     }
@@ -143,6 +143,7 @@ module.exports = {
     db.collection(version + '-trend').find({}, {
       "date": 1,
       "dateDisplay": 1,
+      "total":1,
       "open": 1,
       "triaged": 1
     }).sort({

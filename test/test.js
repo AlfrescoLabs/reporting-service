@@ -64,9 +64,13 @@ describe('reporting/api/alfresco/5.1/01/01/2015', function() {
     }
 })
 after(function(done){
-	db.dropDatabase(function(){
-    done();
-	});
+  if(db.databaseName === "test-testplatform"){
+    db.dropDatabase(function(){
+      done();
+  	});
+  }else{
+    done()
+  }
 });
 
 describe('reporting/api/alfresco/5.1/defects', function() {
@@ -123,7 +127,6 @@ describe('reporting/api/alfresco/5.1/defect/trend', function(done) {
 
 describe('reporting/api/alfresco/5.1/trend',function(done){
   it('should display results from db',function(done){
-    this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/trend').end(
       function(err, res) {
         assert.ifError(err)
