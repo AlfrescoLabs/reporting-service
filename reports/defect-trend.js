@@ -2,6 +2,7 @@ var config = require('../config')
 var request = require('request')
 var async = require('async')
 var headers = {
+  'Content-Type': 'application/json',
   "Authorization": config.jira.authentication
 };
 var db = require('mongoskin').db(config.mongo)
@@ -26,10 +27,10 @@ module.exports = {
     var tomorrow = new Date(targetDate);
     tomorrow.setDate(targetDate.getDate() + 1);
     var parsedTomorrow = tomorrow.getFullYear() + "-" + (new Number(tomorrow.getMonth()) + 1) + "-" + tomorrow.getDate()
-    var json = {
+    var model = {
       date: targetDate.getTime(),
       dateDisplay: targetDate.getDate() + '/' + (targetDate.getMonth() + 1) + '/' + targetDate.getFullYear(),
-      total:0,
+      total: 0,
       triaged: {
         count: 0,
         critical: 0,
@@ -46,26 +47,32 @@ module.exports = {
     async.parallel([getData], display);
 
     function getData(callback) {
-      var filter = 'project = ace AND status not in (closed, verified)' +
+      var jql = 'project = ace AND status not in (closed, verified)' +
         'AND (fixVersion = 5.1 OR affectedVersion = 5.1) AND priority ' +
         'in (blocker, critical) AND type in (bug) ORDER BY created DESC'
-      console.log(filter)
-      var searchApiPath = '/jira/rest/api/2/search?jql=';
-      var path = jiraUrl + searchApiPath + filter;
+
+      var searchApiPath = '/jira/rest/api/2/search';
+      var path = jiraUrl + searchApiPath;
       var option = {
-          'url': path,
-          headers
+        headers,
+        'url': path,
+        'json': {
+          'jql': jql,
+          "startAt": 0,
+          "maxResults": 1000
         }
+      }
+      console.log(option)
         //Query jira for open bugs
-      request(option, function(err, response, body) {
+      request.post(option, function(err, response, body) {
         if (err) {
-          console.log(err);
-          callback(true);
-          return;
+          console.log(err)
+          callback(true)
+          return
         }
-        var data = JSON.parse(body);
-        json.total = data.total;
-        var issues = data.issues;
+        var data = body.issues
+        model.total = body.issues.length
+        var issues = body.issues
         if (typeof issues !== 'undefined') {
           issues.map(function(issue) {
             var item = {
@@ -80,28 +87,28 @@ module.exports = {
               })
               if (triaged.length > 0) {
                 if (item.type === 'Blocker') {
-                  json.triaged.blocker++;
+                  model.triaged.blocker++;
                 }
                 if (item.type === 'Critical') {
-                  json.triaged.critical++;
+                  model.triaged.critical++;
                 }
-                json.triaged.issues.push(item);
+                model.triaged.issues.push(item);
                 return;
               }
             }
 
             if (item.type === 'Blocker') {
-              json.open.blocker++;
+              model.open.blocker++;
             }
             if (item.type === 'Critical') {
-              json.open.critical++;
+              model.open.critical++;
             }
-            json.open.issues.push(item);
+            model.open.issues.push(item);
           })
           callback(false);
         }
-        json.open.count = json.open.issues.length
-        json.triaged.count = json.triaged.issues.length
+        model.open.count = model.open.issues.length
+        model.triaged.count = model.triaged.issues.length
       })
     }
     /*
@@ -117,8 +124,8 @@ module.exports = {
       //store it to mongodb
       report = db.collection(version + '-trend');
       report.update({
-        dateDisplay: json.dateDisplay
-      }, json, {
+        dateDisplay: model.dateDisplay
+      }, model, {
         upsert: true
       }, function(err, result) {
         if (err) {
@@ -126,18 +133,18 @@ module.exports = {
           res.status(500).send('DB error');
         }
         if (result) {
-          res.send(json)
+          res.send(model)
         }
       });
     }
   },
-  getDefectTrend: function(req,res){
+  getDefectTrend: function(req, res) {
     var version = req.params.version;
     db.collection(version + '-trend').find({}, {
-      "date" : 1,
-      "dateDisplay" : 1,
-      "open" : 1,
-      "triaged" : 1
+      "date": 1,
+      "dateDisplay": 1,
+      "open": 1,
+      "triaged": 1
     }).sort({
       date: 1
     }).toArray(function(err, result) {

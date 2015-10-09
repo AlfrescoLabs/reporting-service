@@ -65,9 +65,12 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
   if (error) throw error;
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+  var color = d3.scale.ordinal()
+    .domain(['New CAT 1','New CAT 2'])
+    .range(["#cc0000","#FF3333"]);
 
   data.forEach(function(d) {
     d.date = parseDate(d.date);

@@ -105,6 +105,7 @@ function verifyModel(json){
 //////////////////// Defect Trend test
 describe('reporting/api/alfresco/5.1/defect/trend', function(done) {
   it('Should get data and store only one entery per day', function(done) {
+    this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end(function(err, res) {
       assert(res.status === 200)
       var today = new Date()
@@ -122,6 +123,7 @@ describe('reporting/api/alfresco/5.1/defect/trend', function(done) {
 
 describe('reporting/api/alfresco/5.1/trend',function(done){
   it('should display results from db',function(done){
+    this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/trend').end(
       function(err, res) {
         assert.ifError(err)
