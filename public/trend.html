@@ -68,7 +68,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
   color.domain(['New CAT 1','New CAT 2','CAT 1 Pending','CAT 2 Pending'])
   .range(["#cc0000","#FF3333","#BEBEBE","#D3D3D3"]);
 
-  var browsers = stack(color.domain().map(function(name) {
+  var defcectType = stack(color.domain().map(function(name) {
     var item = {
       name: name,
       values: data.map(function(d) {
@@ -87,6 +87,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
         return {date: d.date, y: value / 100};
       })
     }
+    console.log(item)
     return item
 
 
@@ -95,7 +96,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
   x.domain(d3.extent(data, function(d) { return d.date; }));
 
   var browser = svg.selectAll(".browser")
-      .data(browsers)
+      .data(defcectType)
     .enter().append("g")
       .attr("class", "browser");
 
