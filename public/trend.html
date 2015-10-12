@@ -94,7 +94,18 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
   }));
 
   x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain([0, 80]);
+
+  function getMaxY(){
+      var max = d3.max(data,function(d){
+          var val = (typeof d.total === 'undefined'? 0:d.total)
+          return val
+      })
+      //Add a buffer of another 20 units to fit the legends.
+      return max + 20
+  }
+  y.domain([0, getMaxY()]);
+
+  // y.domain([0, 80]);
   var defect = svg.selectAll(".defect")
       .data(defcectType)
     .enter().append("g")
