@@ -13,7 +13,7 @@ body {
   shape-rendering: crispEdges;
 }
 
-.browser text {
+.defect text {
   text-anchor: end;
 }
 
@@ -38,7 +38,7 @@ var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom");
 
-    var yAxis = d3.svg.axis()
+var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left").tickFormat(d3.format("d"))
 
@@ -84,7 +84,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
         if (name === 'CAT 2 Pending') {
           value = d.open.critical;
         }
-        return {date: d.date, y: value / 100};
+        return {date: d.date, y: value };
       })
     }
     console.log(item)
@@ -94,13 +94,13 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
   }));
 
   x.domain(d3.extent(data, function(d) { return d.date; }));
-
-  var browser = svg.selectAll(".browser")
+  y.domain([0, 80]);
+  var defect = svg.selectAll(".defect")
       .data(defcectType)
     .enter().append("g")
-      .attr("class", "browser");
+      .attr("class", "defect");
 
-  browser.append("path")
+  defect.append("path")
       .attr("class", "area")
       .attr("d", function(d) {
         return area(d.values);
@@ -109,7 +109,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
         return color(d.name);
       });
 
-  browser.append("text")
+  defect.append("text")
       .datum(function(d) {
          return {name: d.name, value: d.values[d.values.length - 1]};
         })
