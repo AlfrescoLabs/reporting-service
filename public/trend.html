@@ -87,10 +87,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
         return {date: d.date, y: value };
       })
     }
-    console.log(item)
     return item
-
-
   }));
 
   x.domain(d3.extent(data, function(d) { return d.date; }));

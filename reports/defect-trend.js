@@ -49,8 +49,9 @@ module.exports = {
     function getData(callback) {
       var jql = 'project = ace AND status not in (closed, verified)' +
         'AND (fixVersion = 5.1 OR affectedVersion = 5.1) AND priority ' +
-        'in (blocker, critical) AND type in (bug) ORDER BY created DESC'
-
+        'in (blocker, critical) AND type in (bug) ' +
+        "AND created >= 2015-9-1 AND created <= " + parsedTomorrow +
+        ' ORDER BY created DESC'
       var searchApiPath = '/jira/rest/api/2/search';
       var path = jiraUrl + searchApiPath;
       var option = {
