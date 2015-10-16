@@ -31,7 +31,7 @@ module.exports = {
       date: targetDate.getTime(),
       dateDisplay: targetDate.getDate() + '/' + (targetDate.getMonth() + 1) + '/' + targetDate.getFullYear(),
       total: 0,
-      triaged: {
+      pending: {
         count: 0,
         critical: 0,
         blocker: 0,
@@ -48,7 +48,7 @@ module.exports = {
 
     function getData(callback) {
       var jql = 'project = ace AND status not in (closed, verified)' +
-        'AND (fixVersion = 5.1 OR affectedVersion = 5.1) AND priority ' +
+        'AND (fixVersion = 5.1) AND priority ' +
         'in (blocker, critical) AND type in (bug) ' +
         ' ORDER BY created DESC'
 
@@ -81,18 +81,16 @@ module.exports = {
               type: issue.fields.priority.name
             };
             if (issue.fields.labels.length > 0) {
-              //check if triaged
-              var triaged = issue.fields.labels.filter(function(x) {
-                return x === 'triaged'
-              })
-              if (triaged.length > 0) {
+              //check if pending
+              var status = issue.fields.status.name.toLowerCase()
+              if(status === 'ready to test'){
                 if (item.type === 'Blocker') {
-                  model.triaged.blocker++;
+                  model.pending.blocker++;
                 }
                 if (item.type === 'Critical') {
-                  model.triaged.critical++;
+                  model.pending.critical++;
                 }
-                model.triaged.issues.push(item);
+                model.pending.issues.push(item);
                 return;
               }
             }
@@ -108,7 +106,7 @@ module.exports = {
           callback(false);
         }
         model.open.count = model.open.issues.length
-        model.triaged.count = model.triaged.issues.length
+        model.pending.count = model.pending.issues.length
       })
     }
     /*
@@ -146,7 +144,7 @@ module.exports = {
       "dateDisplay": 1,
       "total":1,
       "open": 1,
-      "triaged": 1
+      "pending": 1
     }).sort({
       date: 1
     }).toArray(function(err, result) {

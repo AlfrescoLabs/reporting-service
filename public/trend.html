@@ -73,10 +73,10 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
       name: name,
       values: data.map(function(d) {
         if (name === 'New CAT 1') {
-          value = d.triaged.blocker;
+          value = d.pending.blocker;
         }
         if (name === 'New CAT 2') {
-          value = d.triaged.critical;
+          value = d.pending.critical;
         }
         if (name === 'CAT 1 Pending') {
           value = d.open.critical;
@@ -98,7 +98,7 @@ d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
           return val
       })
       //Add a buffer of another 20 units to fit the legends.
-      return max + 20
+      return max + 40
   }
   y.domain([0, getMaxY()]);
 
