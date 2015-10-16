@@ -94,7 +94,6 @@ module.exports = {
                 return;
               }
             }
-
             if (item.type === 'Blocker') {
               model.open.blocker++;
             }
@@ -103,10 +102,10 @@ module.exports = {
             }
             model.open.issues.push(item);
           })
+          model.open.count = model.open.issues.length
+          model.pending.count = model.pending.issues.length
           callback(false);
         }
-        model.open.count = model.open.issues.length
-        model.pending.count = model.pending.issues.length
       })
     }
     /*

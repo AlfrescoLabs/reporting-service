@@ -143,4 +143,20 @@ describe('reporting/api/alfresco/5.1/trend',function(done){
         done()
       });
   })
+  it('Should get data and store only one entery per day', function(done) {
+    this.timeout(15000); // Setting a longer timeout
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end()
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end(function(err, res) {
+      assert(res.status === 200)
+      var today = new Date()
+      var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
+      db.collection('5.1-trend').find({
+        'dateDisplay': parsedDate
+      }).toArray(function(err, result) {
+        should(1).be.equal(result.length)
+        verifyModel(result[0].open)
+        done()
+      });
+    });
+  })
 })
