@@ -14,8 +14,8 @@ module.exports = {
    * Gets defects stroed in db
    */
   getDefects: function(req, res) {
-    var name = req.params.version;
-    db.collection('report').find({}, {
+    var version = req.params.version;
+    db.collection(version + '-report').find({}, {
       "date" : 1,
       "dateDisplay" : 1,
       "open" : 1
@@ -114,7 +114,7 @@ module.exports = {
           return;
         }
         //store it to mongodb
-        report = db.collection('report');
+        report = db.collection(version+'-report');
         report.update({
           dateDisplay: json.dateDisplay
         }, json, {
