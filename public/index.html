@@ -64,7 +64,7 @@
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json('reporting/api/alfresco/5.1/defects', function(error, data) {
+    d3.json('reporting/api/alfresco/5.1/defects/created/summary', function(error, data) {
       if (error) {
         console.log(error);
         throw error;

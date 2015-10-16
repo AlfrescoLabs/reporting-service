@@ -60,7 +60,7 @@ var svg = d3.select("body").append("svg")
 
 var color = d3.scale.ordinal()
 
-d3.json('reporting/api/alfresco/5.1/trend', function(error, data) {
+d3.json('reporting/api/alfresco/5.1/defects/open/summary', function(error, data) {
   if (error) throw error;
   data.forEach(function(d) {
       d.date = new Date(d.date)

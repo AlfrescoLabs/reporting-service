@@ -15,35 +15,17 @@ npm start
 ## Examples
 
 ### Get all open defects for product release
-http://localhost:3000/reporting/api/alfresco/5.1/status
-expected result:
 
-```[{
-_id: "560d293d985a1b1583dee3be",
-date: "9/22/2015",
-open: {
-count: 27,
-critical: 14,
-blocker: 13,
-issues: [
-{
-id: "ACE-4290",
-link: "https://issuestest.alfresco.com/jira/rest/api/2/issue/148825",
-type: "Blocker"
-},
-close: {
-count: 5,
-critical: 3,
-blocker: 2,
-issues: [
-{
-id: "ACE-4285",
-link: "https://issuestest.alfresco.com/jira/rest/api/2/issue/148748",
-type: "Blocker"
-}]
-```
+
+
 ### Query JIRA and store data###
-Store data from today.
-http://localhost:3000/reporting/api/alfresco/5.1
-Stroe from a specific date.
-http://localhost:3000/reporting/api/alfresco/5.1/20/09/2015
+Store defects created from today.
+http://localhost:3000/reporting/api/alfresco/5.1/defects/created
+Store defects created from a specific date.
+http://localhost:3000/reporting/api/alfresco/5.1/defects/created/20/09/2015
+Display defects created summary for charting
+http://localhost:3000/reporting/api/alfresco/5.1/defects/created/summary
+Store open defects from today.
+http://localhost:3000/reporting/api/alfresco/5.1/defects/open
+Display open defects trend summary for charting
+http://localhost:3000/reporting/api/alfresco/5.1/defects/open/summary

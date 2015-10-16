@@ -111,7 +111,6 @@ module.exports = {
     /*
      * Store and send collated result
      */
-
     function display(err, results) {
       if (err) {
         console.log(err);
@@ -131,7 +130,6 @@ module.exports = {
         }
         if (result) {
           res.send(model)
-
         }
       });
     }

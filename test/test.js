@@ -12,14 +12,14 @@ before(function(done){
   //Call api to update backend twice, expect one entry as this as an upsert op.
   async.parallel([
     function callApi(callback){
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(function(err,res){
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created').end(function(err,res){
         assert(res.status === 200)
         callback()
       })
     }
     ,
     function callApi2nd(callback){
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1').end(function(err,res){
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created').end(function(err,res){
         assert(res.status === 200)
         callback()
       })
@@ -28,7 +28,7 @@ before(function(done){
       done()
     })
 })
-describe('reporting/api/alfresco/5.1', function() {
+describe('reporting/api/alfresco/5.1/defects/created', function() {
     it('Should get data and store only one entery per day',function(done){
       var today = new Date()
       var parsedDate =  today.getDate()+ "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
@@ -39,18 +39,18 @@ describe('reporting/api/alfresco/5.1', function() {
       });
     });
 });
-describe('reporting/api/alfresco/5.1/01/01/2015', function() {
+describe('reporting/api/alfresco/5.1/defects/created/01/01/2015', function() {
     it('Should only have 1 entery per given date',function(done){
       this.timeout(15000); // Setting a longer timeout
       var targetDate = new Date(2015, 0, 01, 0, 0, 0, 0)
       var parsedDate =  targetDate.getDate()+ "/" + (new Number(targetDate.getMonth()) + 1) + "/" + targetDate.getFullYear()
       //Call api to update backend twice, expect one entry as this as an upsert op.
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/01/01/2015').end(function(err,res){
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/01/01/2015').end(function(err,res){
         assert(res.status === 200)
         should.equal('1/1/2015', res.body.dateDisplay)
         verifyDB(parsedDate)
       })
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/1/1/2015').end(function(err,res){
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/1/1/2015').end(function(err,res){
         assert(res.status === 200)
         should.equal('1/1/2015', res.body.dateDisplay)
         verifyDB(parsedDate)
@@ -73,18 +73,17 @@ after(function(done){
   }
 });
 
-describe('reporting/api/alfresco/5.1/defects', function() {
+describe('reporting/api/alfresco/5.1/defects/created', function() {
   it('should only return open jira issues from mongo', function(done) {
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects').end(
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created').end(
       function(err, res) {
         assert.ifError(err)
         assert(res.status === 200)
         var response = res.body
-        var json = response[0]
-        json.should.have.property('date')
-        should.not.exist(json.close)
-        json.should.have.property('open')
-        verifyModel(json.open)
+        response.should.have.property('date')
+        should.not.exist(response.close)
+        response.should.have.property('open')
+        verifyModel(response.open)
         done()
       });
   });
@@ -107,32 +106,28 @@ function verifyModel(json){
   }
 }
 //////////////////// Defect Trend test
-describe('reporting/api/alfresco/5.1/defect/trend', function(done) {
-  it('Should get data and store only one entery per day', function(done) {
-    this.timeout(15000); // Setting a longer timeout
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end(function(err, res) {
-      assert(res.status === 200)
-      var today = new Date()
-      var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
-      db.collection('5.1-report').find({
-        'dateDisplay': parsedDate
-      }).toArray(function(err, result) {
-        should(1).be.equal(result.length)
-        verifyModel(result[0].open)
-        done()
+describe('reporting/api/alfresco/5.1/defects/open',function(done){
+    it('Should get data and store only one entery per day', function(done) {
+      this.timeout(15000); // Setting a longer timeout
+      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(function(err, res) {
+        assert(res.status === 200)
+        var today = new Date()
+        var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
+        db.collection('5.1-report').find({
+          'dateDisplay': parsedDate
+        }).toArray(function(err, result) {
+          should(1).be.equal(result.length)
+          verifyModel(result[0].open)
+          done()
       });
     });
   })
-})
-
-describe('reporting/api/alfresco/5.1/trend',function(done){
   it('should display results from db',function(done){
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/trend').end(
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(
       function(err, res) {
         assert.ifError(err)
         assert(res.status === 200)
-        var response = res.body
-        var json = response[0]
+        var json = res.body
         json.should.have.property('date')
         should.not.exist(json.close)
         json.should.have.property('open')
@@ -145,8 +140,8 @@ describe('reporting/api/alfresco/5.1/trend',function(done){
   })
   it('Should get data and store only one entery per day', function(done) {
     this.timeout(15000); // Setting a longer timeout
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end()
-    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defect/trend').end(function(err, res) {
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end()
+    superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(function(err, res) {
       assert(res.status === 200)
       var today = new Date()
       var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
