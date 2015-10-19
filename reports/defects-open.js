@@ -85,7 +85,8 @@ module.exports = {
             var item = {
               id: issue.key,
               link: issue.self,
-              type: issue.fields.priority.name
+              type: issue.fields.priority.name,
+              status: issue.fields.status.name
             };
             if (issue.fields.labels.length > 0) {
               //check if pending
