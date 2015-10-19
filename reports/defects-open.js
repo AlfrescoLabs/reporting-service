@@ -143,19 +143,18 @@ module.exports = {
   },
   getDefectTrend: function(req, res) {
     var version = req.params.version;
-    module.exports.update(req,function(){
-        db.collection(version + '-trend').find({}, {
-          "date": 1,
-          "dateDisplay": 1,
-          "total":1,
-          "open": 1,
-          "pending": 1
-        }).sort({
-          date: -1
-        }).toArray(function(err, result) {
-          if (err) throw err;
-          res.send(result);
-        })
+    module.exports.update(req,function(){})
+    db.collection(version + '-trend').find({}, {
+      "date": 1,
+      "dateDisplay": 1,
+      "total":1,
+      "open": 1,
+      "pending": 1
+    }).sort({
+      date: -1
+    }).toArray(function(err, result) {
+      if (err) throw err;
+      res.send(result);
     })
   }
 }
