@@ -1,3 +1,7 @@
+/*
+ * Manages data relating to reports that display the
+ * number of open defects on a given day.
+ */
 var config = require('../config')
 var request = require('request')
 var async = require('async')

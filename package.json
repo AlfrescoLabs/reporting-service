@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Test platform reporting service.",
   "main": "app.js",
-  "repository" :{
-    "type" : "git",
-    "url" : "https://github.com/AlfrescoTestAutomation/reporting-service.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlfrescoTestAutomation/reporting-service.git"
   },
   "scripts": {
     "start": "node app.js",
@@ -16,6 +16,7 @@
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.13.3",
+    "cron": "^1.0.9",
     "express": "^4.13.3",
     "mongodb": "^1.4.39",
     "mongoskin": "^1.4.13",

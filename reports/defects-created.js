@@ -1,3 +1,7 @@
+/*
+ * Manages data relating to reports that display the
+ * number of defects created on a given day
+ */
 var request = require('request') //http request
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo)
