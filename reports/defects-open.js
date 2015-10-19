@@ -62,7 +62,7 @@ module.exports = {
       var searchApiPath = '/jira/rest/api/2/search';
       var path = jiraUrl + searchApiPath;
       var option = {
-        headers,
+        headers: headers,
         'url': path,
         'json': {
           'jql': jql,
