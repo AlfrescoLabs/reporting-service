@@ -15,9 +15,4 @@ router.get('/api/alfresco/:version/defects/open/:day/:month/:year', trend.update
 router.get('/api/alfresco/:version/defects/open', trend.updateDefectTrend);
 router.get('/api/alfresco/:version/defects/open/summary',trend.getDefectTrend)
 
-//Cron jobs
-var CronJob = require('cron').CronJob;
-new CronJob('* * 23 * * *', function() {
-  console.log('You will see this message every second');
-}, null, true, 'America/Los_Angeles');
 module.exports = router

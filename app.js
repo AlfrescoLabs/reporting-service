@@ -1,7 +1,8 @@
 var express = require('express')                        // Web framework
-var bodyParser = require('body-parser')                 //Pulls information from HTML post
-var path = require('path');                             //System path
-var routes = require('./routes/main')                // Application routes
+var bodyParser = require('body-parser')                 // Pulls information from HTML post
+var path = require('path');                             // System path
+var routes = require('./routes/main')                   // Application routes
+var cronJobs = require('./cron-jobs/index')             // Kick off cron jobs
 var app = express()
 app.set('view engine', 'html')
 app.use(bodyParser.urlencoded({'extended': 'true'}))    // parse application/x-www-form-urlencoded
