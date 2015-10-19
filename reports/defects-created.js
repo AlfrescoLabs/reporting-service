@@ -76,7 +76,7 @@ module.exports = {
           var path = jiraUrl + searchApiPath + filter;
           var option = {
             url: path,
-            headers
+            headers: headers
           }
 
           //Query jira for open bugs
