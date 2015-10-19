@@ -19,22 +19,25 @@ module.exports = {
    */
   getDefects: function(req, res) {
     var version = req.params.version;
-    db.collection(version + '-report').find({}, {
-      "date" : 1,
-      "dateDisplay" : 1,
-      "open" : 1
-    }).sort({
-      date: 1
-    }).toArray(function(err, result) {
-      if (err) throw err;
-      res.send(result);
+    //First we get the latest data
+    module.exports.update(req, function(){
+        db.collection(version + '-report').find({}, {
+          "date" : 1,
+          "dateDisplay" : 1,
+          "open" : 1
+        }).sort({
+          date: 1
+        }).toArray(function(err, result) {
+          if (err) throw err;
+          res.send(result);
+        })
     })
   },
 
   /**
    * Get open bug list and populate db.
    */
-  updateDefects: function(req, res) {
+  update: function(req, callback) {
     var version = req.params.version;
     var targetDate = new Date();
     var day = req.params.day;
@@ -111,12 +114,7 @@ module.exports = {
       /*
        * Store and send collated result
        */
-      function display(err, results) {
-        if (err) {
-          console.log(err);
-          res.status(500).send('Internal Server Error');
-          return;
-        }
+      function save(err, results) {
         //store it to mongodb
         report = db.collection(version+'-report');
         report.update({
@@ -126,12 +124,19 @@ module.exports = {
         }, function(err, result) {
           if (err) {
             console.log('DB error: ' + err);
-            res.status(500).send('DB error');
+            callback(false)
           }
-          if (result) {
-            res.send(json)
-          }
+          callback(json)
         });
       })
   }
+    ,
+    /**
+     * Display the json response from update defect.
+     */
+     updateAndDisplayDefects: function(req, res) {
+        module.exports.update(req,function(result){
+            res.send(result)
+        })
+     }
 }

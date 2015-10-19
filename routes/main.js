@@ -4,8 +4,8 @@ var express = require('express')
 var router = express.Router()
 
 //Update db with data from jira
-router.get('/api/alfresco/:version/defects/created/:day/:month/:year', report.updateDefects)
-router.get('/api/alfresco/:version/defects/created', report.updateDefects)
+router.get('/api/alfresco/:version/defects/created/:day/:month/:year', report.updateAndDisplayDefects)
+router.get('/api/alfresco/:version/defects/created', report.updateAndDisplayDefects)
 /**
  * Get new defects found per day from backend
  */
