@@ -10,15 +10,18 @@ var headers = {
   "Authorization": config.jira.authentication
 };
 var db = require('mongoskin').db(config.mongo)
-
 var jiraUrl = config.jira.url
 
 module.exports = {
-
+  updateDefectTrend : function(req,res){
+      module.exports.update(req, function(result){
+          res.send(result)
+      });
+  },
   /**
    * Get open bug list and populate db.
    */
-  updateDefectTrend: function(req, res) {
+  update: function(req, callback) {
     var version = req.params.version;
     var targetDate = new Date();
     var day = req.params.day;
@@ -48,7 +51,7 @@ module.exports = {
         issues: []
       }
     };
-    async.parallel([getData], display);
+    async.parallel([getData], save);
 
     function getData(callback) {
       var jql = 'project = ace AND status not in (closed, verified)' +
@@ -115,10 +118,10 @@ module.exports = {
     /*
      * Store and send collated result
      */
-    function display(err, results) {
+    function save(err, results) {
       if (err) {
         console.log(err);
-        res.status(500).send('Internal Server Error');
+        callback(false);
         return;
       }
       //store it to mongodb
@@ -130,27 +133,29 @@ module.exports = {
       }, function(err, result) {
         if (err) {
           console.log('DB error: ' + err);
-          res.status(500).send('DB error');
+          callback(false);
         }
         if (result) {
-          res.send(model)
+          callback(model);
         }
       });
     }
   },
   getDefectTrend: function(req, res) {
     var version = req.params.version;
-    db.collection(version + '-trend').find({}, {
-      "date": 1,
-      "dateDisplay": 1,
-      "total":1,
-      "open": 1,
-      "pending": 1
-    }).sort({
-      date: -1
-    }).toArray(function(err, result) {
-      if (err) throw err;
-      res.send(result);
+    module.exports.update(req,function(){
+        db.collection(version + '-trend').find({}, {
+          "date": 1,
+          "dateDisplay": 1,
+          "total":1,
+          "open": 1,
+          "pending": 1
+        }).sort({
+          date: -1
+        }).toArray(function(err, result) {
+          if (err) throw err;
+          res.send(result);
+        })
     })
   }
 }
