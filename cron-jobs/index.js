@@ -5,13 +5,13 @@
 var CronJob = require('cron').CronJob;
 var request = require('request')
 module.exports = {
-    "job1 get defects created data" : new CronJob('2 * * * * *', function() {
+    "job1 get defects created data" : new CronJob('* * 23 * * *', function() {
       console.log('Populating data for defects created report')
       request.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created', function(err, response, body) {
           console.log(body);
       })
   }, null, true, 'Europe/London'),
-  "job2 get open defect ": new CronJob('1 * * * * *', function() {
+  "job2 get open defect ": new CronJob('* * 23 * * *', function() {
       console.log('Populating data for defects created report')
       request.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created', function(err, response, body) {
           console.log(body);
