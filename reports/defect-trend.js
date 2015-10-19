@@ -83,7 +83,7 @@ module.exports = {
             if (issue.fields.labels.length > 0) {
               //check if pending
               var status = issue.fields.status.name.toLowerCase()
-              if(status === 'ready to test'){
+              if(status === 'ready to test' || status === 'in test'){
                 if (item.type === 'Blocker') {
                   model.pending.blocker++;
                 }
@@ -143,7 +143,7 @@ module.exports = {
       "open": 1,
       "pending": 1
     }).sort({
-      date: 1
+      date: -1
     }).toArray(function(err, result) {
       if (err) throw err;
       res.send(result);

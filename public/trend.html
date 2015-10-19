@@ -66,23 +66,23 @@ d3.json('reporting/api/alfresco/5.1/defects/open/summary', function(error, data)
       d.date = new Date(d.date)
   });
   color.domain(['New CAT 1','New CAT 2','CAT 1 Pending','CAT 2 Pending'])
-  .range(["#cc0000","#FF3333","#BEBEBE","#D3D3D3"]);
+  .range(["#CC0000","#FF3333","#BEBEBE","#D3D3D3"]);
 
   var defcectType = stack(color.domain().map(function(name) {
     var item = {
       name: name,
       values: data.map(function(d) {
         if (name === 'New CAT 1') {
-          value = d.pending.blocker;
+          value = d.open.blocker;
         }
         if (name === 'New CAT 2') {
-          value = d.pending.critical;
+          value = d.open.critical;
         }
         if (name === 'CAT 1 Pending') {
-          value = d.open.critical;
+          value = d.pending.blocker;
         }
         if (name === 'CAT 2 Pending') {
-          value = d.open.critical;
+          value = d.pending.critical;
         }
         return {date: d.date, y: value };
       })
@@ -100,7 +100,8 @@ d3.json('reporting/api/alfresco/5.1/defects/open/summary', function(error, data)
       //Add a buffer of another 20 units to fit the legends.
       return max + 40
   }
-  y.domain([0, getMaxY()]);
+  var m = getMaxY();
+  y.domain([0, m]);
 
   // y.domain([0, 80]);
   var defect = svg.selectAll(".defect")
@@ -143,13 +144,13 @@ d3.json('reporting/api/alfresco/5.1/defects/open/summary', function(error, data)
           return "translate(0," + i * 20 + ")";
         });
 
-      legend.append("rect")
+  legend.append("rect")
         .attr("x", width - 18)
         .attr("width", 18)
         .attr("height", 18)
         .style("fill", color);
 
-      legend.append("text")
+  legend.append("text")
         .attr("x", width - 24)
         .attr("y", 9)
         .attr("dy", ".35em")

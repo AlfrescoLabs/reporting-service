@@ -123,6 +123,7 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
     });
   })
   it('should display results from db',function(done){
+   this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(
       function(err, res) {
         assert.ifError(err)
