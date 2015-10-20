@@ -1,7 +1,5 @@
 var env = process.env.NODE_ENV || 'development'
 
-console.log('Running in '+ env +' mode');
-
 switch (env) {
   case 'development':
   case 'test':
@@ -18,3 +16,5 @@ switch (env) {
 }
 
 module.exports = config;
+
+console.log('Running in '+ env +' mode\nConnecting to ' + config.mongo + ' Database');
