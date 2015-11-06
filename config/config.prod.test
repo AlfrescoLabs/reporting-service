@@ -1,0 +1,4 @@
+var config = require('./config.global')
+config.env = 'prod'
+config.mongo = 'mongodb://54.75.249.107:27017/test-testplatform'
+module.exports = config

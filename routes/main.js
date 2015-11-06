@@ -1,5 +1,6 @@
 var report =  require('../reports/defects-created')
 var trend =  require('../reports/defects-open')
+var scurve = require('../reports/scurve')
 var express = require('express')
 var router = express.Router()
 
@@ -14,5 +15,8 @@ router.get('/api/alfresco/:version/defects/created/summary', report.getDefects)
 router.get('/api/alfresco/:version/defects/open/:day/:month/:year', trend.updateDefectTrend);
 router.get('/api/alfresco/:version/defects/open', trend.updateDefectTrend);
 router.get('/api/alfresco/:version/defects/open/summary',trend.getDefectTrend)
-
+/**
+ * Scurve for release.
+ */
+ router.get('/api/alfresco/:version/scurve',scurve.getReport);
 module.exports = router
