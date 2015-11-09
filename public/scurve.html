@@ -102,11 +102,11 @@
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
-      svg.append("g")
+    svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
 
-      svg.append("text")
+    svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0-margin.left)
         .attr("x",0 - (height / 2))
@@ -114,14 +114,13 @@
         .style("text-anchor", "middle")
         .text("Test Cases");
 
-      var state = svg.selectAll(".date")
+    var state = svg.selectAll(".date")
         .data(data)
         .enter().append("g")
         .attr("class", "g")
         .attr("transform", function(d) {
           return "translate(" + x(d.dateDisplay) + ",0)";
         });
-
 
     svg.append("text")
         .attr("x", width / 2 )
