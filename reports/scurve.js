@@ -7,7 +7,7 @@ var db = require('mongoskin').db(config.mongo)
 module.exports = {
     getReport: function(req,res){
         var data = {tc:100,
-                    targetDate:"6/11/2015",
+                    targetDate:"10/11/2015",
                     data:
                     [{"id":1,"dateDisplay":"1/11/2015","tc":"66"},
                     {"id":2,"dateDisplay":"2/11/2015","tc":"44"},

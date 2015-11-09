@@ -70,9 +70,46 @@
         console.log(error);
         throw error;
       }
-      x.domain(data.data.map(function(d) {
-        return d.dateDisplay;
-      }));
+      var scurve = function(){
+        var results=[];
+        // DE
+        // ---------------------------------------
+        // DE+ e^(3-8 * DE)
+        //days= 15
+        // total tc 100
+        data.data.map(function(item){
+            //DE = Current Day Number of Effort / Total Days in Effort
+            var currentDate = item.dateDisplay
+            var DE = diff(data.targetDate, currentDate);
+            var e = 2.718281828459045
+            // var totalDaysInTest = item;
+            var result = DE/ DE + e^(5 * DE)
+            console.log(result)
+            results.push({"dateDisplay":currentDate,"tc":result})
+        });
+        function diff( date1, date2 ) {
+          //1 day in milliseconds
+          var aday=1000*60*60*24;
+
+          var day1 = parseDateString(date1);
+          var day2 = parseDateString(date2);
+          // Convert both dates to milliseconds
+          var date1_ms = day1.getTime();
+          var date2_ms = day2.getTime();
+          var diff = date1_ms - date2_ms;
+          return diff/aday;
+        }
+        function parseDateString(date){
+            var y = date.split('/')[2];
+            var m = date.split('/')[1] - 1;
+            var d = date.split('/')[0];
+            return new Date(y,m, d);
+        }
+        return results;
+    }();
+    x.domain(data.data.map(function(d) {
+      return d.dateDisplay;
+    }));
 
       y.domain([0, d3.max(data.data, function(d) {
         return data.tc + 10;
@@ -85,11 +122,18 @@
 	    .y(function(d) {
 	      return y(d.tc);
 	    }).interpolate("basis");
+
 	  svg.append('svg:path')
 	    .attr('d', lineGen(data.data))
 	    .attr('stroke', 'green')
 	    .attr('stroke-width', 2)
 	    .attr('fill', 'none');
+
+        svg.append('svg:path')
+  	    .attr('d', lineGen(scurve))
+  	    .attr('stroke', 'blue')
+  	    .attr('stroke-width', 2)
+  	    .attr('fill', 'none');
 
       svg.append("g")
         .attr("class", "x axis")
