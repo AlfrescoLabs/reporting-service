@@ -11,16 +11,21 @@
       font: 10px sans-serif;
     }
 
-    .axis path,
+
     .axis line {
       fill: none;
       stroke: #000;
       shape-rendering: crispEdges;
     }
-
-    .bar {
-      fill: steelblue;
-    }
+	.axis path {
+	    fill: none;
+	    stroke: #777;
+	    shape-rendering: crispEdges;
+	}
+	.axis text {
+	    font-family: Lato;
+	    font-size: 13px;
+	}
 
   </style>
 </head>
@@ -68,9 +73,23 @@
       x.domain(data.data.map(function(d) {
         return d.dateDisplay;
       }));
+
       y.domain([0, d3.max(data.data, function(d) {
-        return d.tc;
+        return data.tc + 10;
       })]);
+
+	  var lineGen = d3.svg.line()
+	    .x(function(d) {
+	      return x(d.dateDisplay);
+	    })
+	    .y(function(d) {
+	      return y(d.tc);
+	    }).interpolate("basis");
+	  svg.append('svg:path')
+	    .attr('d', lineGen(data.data))
+	    .attr('stroke', 'green')
+	    .attr('stroke-width', 2)
+	    .attr('fill', 'none');
 
       svg.append("g")
         .attr("class", "x axis")
