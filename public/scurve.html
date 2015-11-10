@@ -32,7 +32,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
   <script>
     var margin = {
-        top: 20,
+        top: 40,
         right: 20,
         bottom: 70,
         left: 40
@@ -48,7 +48,7 @@
 
     var xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom")
+        .orient("top")
         .ticks(20, ",.1s")
         .tickSize(6, 0);
 
@@ -85,15 +85,14 @@
             results.push({"day" : currentDay,"tc" : estimatedTC})
         }
         function diff( date1, date2 ) {
-          //1 day in milliseconds
-          var aday=1000*60*60*24;
-
           var day1 = parseDateString(date1);
           var day2 = parseDateString(date2);
           // Convert both dates to milliseconds
           var date1_ms = day1.getTime();
           var date2_ms = day2.getTime();
           var diff = date1_ms - date2_ms;
+          //1 day in milliseconds
+          var aday=1000*60*60*24;
           return diff/aday;
         }
         function parseDateString(date){
@@ -136,13 +135,12 @@
 
       svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(0,0)")
         .call(xAxis)
         .selectAll("text")
-        .attr("y", 0)
-        .attr("x", 9)
+        .attr("y", -14)
+        .attr("x", -5)
         .attr("dy", ".35em")
-        .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
     svg.append("g")
@@ -151,7 +149,7 @@
 
     svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0-margin.left)
+        .attr("y", 0 - margin.left)
         .attr("x",0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
@@ -164,14 +162,6 @@
         .attr("transform", function(d) {
           return "translate(" + x(d.day) + ",0)";
         });
-
-    svg.append("text")
-        .attr("x", width / 2 )
-        .attr("y",  height + 50)
-        .style("text-anchor", "middle")
-        .text("Days");
-
-
     });
   </script>
 
