@@ -26,10 +26,18 @@ module.exports = {
     },
 
     getScurveProjection: function(req,res){
-        var startDate = 1/11/2015
-        var endDate = 10/11/2015
-        var totaclTC = 100
-        var scurve = getScurve(startDate,endDate,totaclTC)
+        var totalTC = req.params.totalTC
+        var sday = req.params.sday
+        var smonth = req.params.smonth
+        var syear = req.params.syear
+        var eday = req.params.eday
+        var emonth = req.params.emonth
+        var eyear = req.params.eyear
+
+        var startDate = sday+ "/" + smonth + "/" + syear
+        var endDate = eday+ "/" + emonth + "/" + eyear
+
+        var scurve = getScurve(startDate,endDate,totalTC)
         res.send(scurve)
     },
 
