@@ -10,8 +10,6 @@
     body {
       font: 10px sans-serif;
     }
-
-
     .axis line {
       fill: none;
       stroke: #000;
@@ -75,18 +73,17 @@
         // DE
         // ---------------------------------------
         // DE+ e^(3-8 * DE)
-        //days= 15
-        // total tc 100
-        data.data.map(function(item){
+
+        var days = 15;
+        for(i = 0 ; i< days; i++){
             //DE = Current Day Number of Effort / Total Days in Effort
-            var currentDate = item.dateDisplay
-            var DE = diff(data.targetDate, currentDate);
+            var currentDay = i+1;
+            var DE = i / days;
             var e = 2.718281828459045
-            // var totalDaysInTest = item;
-            var result = DE/ DE + e^(5 * DE)
-            console.log(result)
-            results.push({"dateDisplay":currentDate,"tc":result})
-        });
+            var result = DE / (DE + Math.pow(e,(3 - 8 * DE)));
+            var estimatedTC = Math.round(result * data.tc);
+            results.push({"day" : currentDay,"tc" : estimatedTC})
+        }
         function diff( date1, date2 ) {
           //1 day in milliseconds
           var aday=1000*60*60*24;
@@ -107,17 +104,19 @@
         }
         return results;
     }();
-    x.domain(data.data.map(function(d) {
-      return d.dateDisplay;
+    console.log(scurve)
+    x.domain(scurve.map(function(d) {
+      return d.day;
     }));
 
-      y.domain([0, d3.max(data.data, function(d) {
-        return data.tc + 10;
-      })]);
+    y.domain([0, d3.max(data.data, function(d) {
+        return data.tc;
+    })]);
 
 	  var lineGen = d3.svg.line()
 	    .x(function(d) {
-	      return x(d.dateDisplay);
+            console.log(d)
+	      return x(d.day);
 	    })
 	    .y(function(d) {
 	      return y(d.tc);
@@ -163,7 +162,7 @@
         .enter().append("g")
         .attr("class", "g")
         .attr("transform", function(d) {
-          return "translate(" + x(d.dateDisplay) + ",0)";
+          return "translate(" + x(d.day) + ",0)";
         });
 
     svg.append("text")
