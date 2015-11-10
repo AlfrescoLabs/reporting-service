@@ -18,5 +18,6 @@ router.get('/api/alfresco/:version/defects/open/summary',trend.getDefectTrend)
 /**
  * Scurve for release.
  */
- router.get('/api/alfresco/:version/scurve',scurve.getReport);
+ router.get('/api/alfresco/:version/scurve/:run',scurve.getReport);
+ router.get('/api/alfresco/:version/scurve/:sday/:smonth/:syear/:eday/:emonth/:eyear/:totalTC',scurve.getScurveProjection);
 module.exports = router
