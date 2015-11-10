@@ -7,8 +7,8 @@ var db = require('mongoskin').db(config.mongo)
 module.exports = {
     getReport: function(req,res){
         //TODO ADD Query to mongo to get cycle
-        var startDate = 1/11/2015
-        var endDate = 10/11/2015
+        var startDate = "1/11/2015"
+        var endDate = "10/11/2015"
         var totaclTC = 100
         var data = {"product":"5.1",
                     "run":"1",
