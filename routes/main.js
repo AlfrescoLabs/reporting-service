@@ -11,10 +11,13 @@ router.get('/api/alfresco/:version/defects/created', report.updateAndDisplayDefe
  * Get new defects found per day from backend
  */
 router.get('/api/alfresco/:version/defects/created/summary', report.getDefects)
+
+
 // Routes to defect trend
 router.get('/api/alfresco/:version/defects/open/:day/:month/:year', trend.updateDefectTrend);
 router.get('/api/alfresco/:version/defects/open', trend.updateDefectTrend);
 router.get('/api/alfresco/:version/defects/open/summary',trend.getDefectTrend)
+router.get('/api/alfresco/:version/defects/open/summary/csv', trend.getDefectsCSV)
 /**
  * Scurve for release.
  */

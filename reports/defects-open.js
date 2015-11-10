@@ -157,5 +157,32 @@ module.exports = {
       if (err) throw err;
       res.send(result);
     })
-  }
+},
+/**
+ * Display the json response from update defect.
+ */
+getDefectsCSV:function(req,res){
+    var version = req.params.version;
+    var csv = '\"Date\","Open CAT 1 defects end of day","open CAT 2 defects end of day","CAT 1 defects pending verification","CAT 2 defects pending verification"' + '\r\n'
+    db.collection(version + '-trend').find({}, {
+      "date": 1,
+      "dateDisplay": 1,
+      "total":1,
+      "open": 1,
+      "pending": 1
+    }).sort({
+      date: -1
+    }).toArray(function(err, result) {
+        if (err) throw err;
+        //Format to csv
+        result.map(function(x){
+            var line =   '"' + x.dateDisplay + '","' + x.open.blocker + '","' + x.open.critical + '","' + x.pending.blocker + '","' + x.pending.critical+ '"';
+            console.log(line)
+            csv += line + '\r\n'
+
+        })
+        res.set('Content-Type', 'application/octet-stream');
+        res.send(csv);
+    })
+    }
 }
