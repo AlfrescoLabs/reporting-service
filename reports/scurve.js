@@ -7,14 +7,14 @@ var db = require('mongoskin').db(config.mongo)
 module.exports = {
     getReport: function(req,res){
         //TODO ADD Query to mongo to get cycle
-        var startDate = "1/11/2015"
-        var endDate = "10/11/2015"
-        var totaclTC = 100
+        var startDate = "16/11/2015"
+        var endDate = "09/12/2015"
+        var totaclTC = 3593
         var data = {"product":"5.1",
                     "run":"1",
-                    "totalTC":totaclTC,//3593
-                    "targetDate":"10/11/2015",//09/12/2015
-                    "startDate":"1/11/2015",//16/11/2015
+                    "totalTC":totaclTC,
+                    "end":"10/11/2015",
+                    "start":"1/11/2015",
                     data:
                     [{"id":1,"day":"1/11/2015","tc":"66"},
                     {"id":2,"day":"2/11/2015","tc":"44"},
@@ -25,6 +25,24 @@ module.exports = {
                     "scurve": getScurve(startDate,endDate,totaclTC)
                 };
         res.send(data)
+    },
+    create: function(req,res){
+        console.log("lets store it")
+        var version = req.params.version;
+        var scurve = db.collection(version + '-scurve')
+
+        scurve.insert({"name":"me"},function(err,result){
+            if(err){console.log(err)}
+            console.log(result)
+            res.send(result);
+        })
+
+    },
+    updateReport : function(req, res){
+
+
+        var scurve = db.collection(version + 'scurve');
+
     },
 
     getScurveProjection: function(req,res){
