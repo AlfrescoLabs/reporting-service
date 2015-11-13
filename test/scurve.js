@@ -5,7 +5,7 @@ var should = require('should')
 var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo)
-var async = require('async')
+
 
 var expectedScurve = [
 { day: "1/11/2015", tc: 0},

@@ -159,7 +159,7 @@ module.exports = {
     })
 },
 /**
- * Display the json response from update defect.
+ * Display the defect trend as a csv.
  */
 getDefectsCSV:function(req,res){
     var version = req.params.version;

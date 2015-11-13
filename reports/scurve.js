@@ -26,8 +26,10 @@ module.exports = {
                 };
         res.send(data)
     },
+    createTest : function(req,res){
+        var tests = db.collection(version )
+    },
     create: function(req,res){
-        console.log("lets store it")
         var version = req.params.version;
         var scurve = db.collection(version + '-scurve')
 
@@ -36,13 +38,9 @@ module.exports = {
             console.log(result)
             res.send(result);
         })
-
     },
     updateReport : function(req, res){
-
-
         var scurve = db.collection(version + 'scurve');
-
     },
 
     getScurveProjection: function(req,res){
