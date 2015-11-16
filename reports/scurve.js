@@ -27,7 +27,7 @@ module.exports = {
         res.send(data)
     },
     createTest : function(req,res){
-        var tests = db.collection(version )
+        var tests = db.collection()
     },
     create: function(req,res){
         var version = req.params.version;

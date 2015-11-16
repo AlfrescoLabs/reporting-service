@@ -48,10 +48,9 @@ describe('It should be able to create, update and find an scurve entry',function
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/1/scurve')
             .end(function(error,res){
             assert(res.status === 200)
-            console.log(res.body)
             var json = res.body
 
-            json.should.have.property('product')
+            json.should.have.property('name')
             json.should.have.property('run')
             json.should.have.property('start')
             json.should.have.property('end')

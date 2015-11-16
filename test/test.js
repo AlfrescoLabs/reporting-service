@@ -156,3 +156,35 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
     });
   })
 })
+/**
+ * Test run creeation tests.
+ */
+describe('Verify that we can create,get,update and delete a test',function(done){
+    it('Should create and store a test plan',function(done){
+        console.log(1)
+        superagent.post('http://localhost:3000/reporting/api/testruns/create/')
+        .send({"name": "5.1"})
+        .end(function(err, res) {
+            console("!!!! " + res)
+            assert(res.status === 200)
+            done()
+        })
+    })
+    it('Should get test plan',function(done){
+        console.log(2)
+        superagent.post('http://localhost:3000/reporting/api/testruns/create/')
+        .send({"name": "test"}).end()
+        superagent.get('http://localhost:3000/reporting/api/testruns/test/').end(
+            function(error,res){
+            console.log(res)
+            // var json = res.body
+            // console.log("===" + json)
+            assert(res.status === 200)
+            // json.should.have.property('name')
+            // assert(json.name===5.1)
+            // json.should.have.property('runs')
+            // assert(json.runs.length === 0)
+            done()
+        })
+    })
+})
