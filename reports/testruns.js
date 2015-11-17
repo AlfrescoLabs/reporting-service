@@ -24,5 +24,11 @@ module.exports ={
                 }
                 res.send(result)
             })
+    },
+    delete: function(req,res){
+        var name = req.params.name
+        testruns.remove({"name":name},function(err,result){
+            res.send({error:false})
+        })
     }
 }

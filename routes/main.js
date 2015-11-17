@@ -31,7 +31,7 @@ router.post('/api/alfresco/:version/:run/scurve', scurve.create)
  */
  router.post('/api/testruns/', testruns.create)
  router.get('/api/testruns/:name',testruns.get)
- // router.delete('/api/testruns/:name',testruns.get)
+ router.delete('/api/testruns/:name',testruns.delete)
  // router.delete('/api/:test',testruns.getTest)
  // router.put('/api/:test',testruns.getTest)
 module.exports = router
