@@ -4,12 +4,25 @@ var testruns = db.collection('testruns').ensureIndex({name:1}, {unique:true},fun
 module.exports ={
     create : function(req,res){
         var name = req.body.name
-        testruns.save(
+        var startDate = req.body.startDate
+        var endDate = req.body.endDate
+        var targetDate = req.body.targetDate
+        var tc = req.body.tc
+        var data =
             {"name":name,
-             "runs":[]
-            },{},function(error,result){
+            "startDate":startDate,
+            "endDate": endDate,
+            "tc" : tc,
+            "state": "ready", // the 3 states completed, started, ready
+            "entries":[]
+            }
+            if(targetDate !== undefined && targetDate !== null){
+                data.targetDate = targetDate
+            }
+        testruns.save(
+            data,{},function(error,result){
                 if(error){
-                    res.send({error:true, msg : "Unable to create the test plan"})
+                    res.send({error:true, msg : error.message})
                     return
                 }
                 res.send({error:false});

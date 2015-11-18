@@ -6,19 +6,23 @@ var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo, {safe:true})
 
-// var testruns = db.collection('test-testruns').ensureIndex([['name', 1]], true, function(err, replies){});
+before(function(done){
+    db.open(function(err, db) {
+        db.collection('testruns').drop()
+        db.collection('testruns').ensureIndex({name:1}, {unique:true},function(err,res){
+            done()
+        })
+    })
+})
 var testName = "mytest";
-var data = {"name":testName}
+var data = {"name":testName,
+            "startDate":"12/11/2100",
+            "endDate": "12/12/2100",
+            "targetDate" : null,
+            "tc" : 1000}
 
-// after("end",function (done) {
-//     testruns.drop(function (err,res) {
-//         done();
-//     });
-// });
-describe('A test plan is the name of the record which contains the collection of test runs which is ' +
-    'the data relating to the execution of tests ',function(done){
-
-    it('Should create and store a test plan',function(done){
+describe('A test run is the data relating to the execution rate of tests per day until complete.' ,function(done){
+    it('Should create and store a test run',function(done){
         superagent.post('http://localhost:3000/reporting/api/testruns/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
@@ -29,19 +33,28 @@ describe('A test plan is the name of the record which contains the collection of
             done()
         })
     })
-    it('Should get a test plan',function(done){
+    it('Should get a test run',function(done){
         superagent.get('http://localhost:3000/reporting/api/testruns/' + testName).end(
             function(error,res){
-            var json = res.body
-            assert(res.status === 200)
-            json.should.have.property('name')
-            assert(json.name === testName)
-            json.should.have.property('runs')
-            assert(json.runs.length === 0)
-            done()
-        })
+                var json = res.body
+                assert(res.status === 200)
+                json.should.have.property('name')
+                assert(json.name === testName)
+                json.should.have.property('startDate')
+                assert(json.startDate === '12/11/2100')
+                json.should.have.property('endDate')
+                assert(json.endDate === '12/12/2100')
+                json.should.have.property('tc')
+                    assert(json.tc === 1000)
+                json.should.have.property('state')
+                assert(json.state === 'ready')
+                json.should.have.property('entries')
+                assert(json.entries.length === 0)
+                json.should.not.have.property('targetDate')
+                done()
+            })
     })
-    it('Should not allow to create a test plan that already exists',function(done){
+    it('Should not allow to create a test run that already exists',function(done){
         superagent.post('http://localhost:3000/reporting/api/testruns/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
@@ -52,23 +65,23 @@ describe('A test plan is the name of the record which contains the collection of
             done()
         })
     })
-    it('Should delete a test plan',function(done){
+    it('Should delete a test run',function(done){
         db.open(function(err, db) {
-            db.collection('testruns', {strict: true}, function(err, testruns) {
-                var q = {"name":"michael"}
-                testruns.insert(q,function(err,result){
-                    testruns.findOne(q, function(err,result){
-                        assert(result !== null)
-                        superagent.del('http://localhost:3000/reporting/api/testruns/michael').end(function(err,res){
-                            testruns.findOne(q,function(err,result){
-                                assert(result === null)
-                                done()
-                            })
+            db.collection('testruns', {}, function(err, testruns) {
+                var q = {"name":testName}
+                testruns.find(q, function(err,result){
+                    should.exist(result)
+                    superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
+                        testruns.findOne(q,function(err,result){
+                            should.not.exist(result)
+                            done()
                         })
-
                     })
                 })
             })
         })
     })
+    // it('Should allow update', function(done){
+    //
+    // })
 })
