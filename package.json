@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "NODE_ENV=test mocha test/testruns.js"
+    "test": "NODE_ENV=test mocha test"
   },
   "author": "Michael Suzuki",
   "license": "Apache-2.0",
