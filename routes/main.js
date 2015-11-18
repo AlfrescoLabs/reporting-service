@@ -25,13 +25,13 @@ router.get('/api/alfresco/:version/defects/open/summary',trend.getDefectTrend)
 router.get('/api/alfresco/:version/scurve/:sday/:smonth/:syear/:eday/:emonth/:eyear/:totalTC', scurve.getScurveProjection)
 router.get('/api/alfresco/:version/:run/scurve', scurve.getReport)
 router.post('/api/alfresco/:version/:run/scurve', scurve.create)
- // router.put('/api/alfresco/:version/scurve/:run', scurve.update);
+
 /**
- * Create Test.
+ * Create Test Run.
  */
  router.post('/api/testruns/', testruns.create)
  router.get('/api/testruns/:name',testruns.get)
+ router.put('/api/testruns', testruns.update)
  router.delete('/api/testruns/:name',testruns.delete)
- // router.delete('/api/:test',testruns.getTest)
  // router.put('/api/:test',testruns.getTest)
 module.exports = router

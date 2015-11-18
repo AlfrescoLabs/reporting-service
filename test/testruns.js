@@ -20,7 +20,11 @@ var data = {"name":testName,
             "endDate": "12/12/2100",
             "targetDate" : null,
             "tc" : 1000}
-
+var newdata = {"name":testName,
+            "startDate":"12/11/2200",
+            "endDate": "12/12/2200",
+            "targetDate" :"12/12/2200",
+            "tc" : 100}
 describe('A test run is the data relating to the execution rate of tests per day until complete.' ,function(done){
     it('Should create and store a test run',function(done){
         superagent.post('http://localhost:3000/reporting/api/testruns/')
@@ -65,23 +69,64 @@ describe('A test run is the data relating to the execution rate of tests per day
             done()
         })
     })
-    it('Should delete a test run',function(done){
+    it('Should allow update of test run if state is ready', function(done){
+        superagent.put('http://localhost:3000/reporting/api/testruns/')
+        .set("Content-Type","application/json")
+        .send(newdata).end(function(err, res){
+            var json = res.body
+            assert(res.status === 200)
+            json.should.have.property('name')
+            should.equal(json.name, testName ,"name value")
+            json.should.have.property('startDate')
+            should.equal(json.startDate,'12/11/2200')
+            json.should.have.property('endDate')
+            assert(json.endDate === '12/12/2200')
+            json.should.have.property('tc')
+                assert(json.tc === 100)
+            json.should.have.property('state')
+            assert(json.state === 'ready')
+            json.should.have.property('entries')
+            assert(json.entries.length === 0)
+            json.should.have.property('targetDate')
+            assert(json.targetDate === '12/12/2200')
+            done()
+        })
+    })
+    it('Should not allow update of test run if state isnt ready', function(done){
+        //update data state in mongodb
         db.open(function(err, db) {
             db.collection('testruns', {}, function(err, testruns) {
                 var q = {"name":testName}
-                testruns.find(q, function(err,result){
-                    should.exist(result)
-                    superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
-                        testruns.findOne(q,function(err,result){
-                            should.not.exist(result)
-                            done()
-                        })
+                testruns.update(q,{$set:{state : "complete"}}, function(err,result){
+                    console.log(result)
+                    superagent.put('http://localhost:3000/reporting/api/testruns/')
+                    .set("Content-Type","application/json")
+                    .send(newdata).end(function(err, res){
+                        var json = res.body
+                        assert(res.status === 200)
+                        json.should.have.property('error')
+                        should.equal(json.error,true)
+
+                        done()
                     })
                 })
             })
         })
     })
-    // it('Should allow update', function(done){
-    //
+    // it('Should delete a test run',function(done){
+    //     db.open(function(err, db) {
+    //         db.collection('testruns', {}, function(err, testruns) {
+    //             var q = {"name":testName}
+    //             testruns.find(q, function(err,result){
+    //                 should.exist(result)
+    //                 superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
+    //                     testruns.findOne(q,function(err,result){
+    //                         should.not.exist(result)
+    //                         done()
+    //                     })
+    //                 })
+    //             })
+    //         })
+    //     })
     // })
 })
