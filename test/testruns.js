@@ -25,7 +25,7 @@ var newdata = {"name":testName,
             "endDate": "12/12/2200",
             "targetDate" :"12/12/2200",
             "tc" : 100}
-describe('A test run is the data relating to the execution rate of tests per day until complete.' ,function(done){
+describe('The test run captures the data relating to test execution of a run, which is a period of time defined by a start and end date.' ,function(done){
     it('Should create and store a test run',function(done){
         superagent.post('http://localhost:3000/reporting/api/testruns/')
         .set("Content-Type","application/json")
@@ -34,6 +34,42 @@ describe('A test run is the data relating to the execution rate of tests per day
             var json = res.body
             json.should.have.property('error')
             assert(json.error === false)
+            done()
+        })
+    })
+    it('Should not create a test run as tc is missing',function(done){
+        var baddata = {"name":"missingTC", "startDate":"12/11/2100", "endDate": "12/12/2100", "targetDate" : null}
+        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        .set("Content-Type","application/json")
+        .send(baddata).end(function(err, res){
+            assert(res.status === 200)
+            var json = res.body
+            json.should.have.property('error')
+            assert(json.error === true)
+            done()
+        })
+    })
+    it('Should not create a test run as end date is null',function(done){
+        var baddata = {"name":"missingTC", "startDate":"12/11/2100", "endDate": null, "targetDate" : null}
+        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        .set("Content-Type","application/json")
+        .send(baddata).end(function(err, res){
+            assert(res.status === 200)
+            var json = res.body
+            json.should.have.property('error')
+            assert(json.error === true)
+            done()
+        })
+    })
+    it('Should not create a test run as start date is undefined',function(done){
+        var baddata = {"name":"missingTC", "startDate": undefined, "endDate": "12/11/2100", "targetDate" : null}
+        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        .set("Content-Type","application/json")
+        .send(baddata).end(function(err, res){
+            assert(res.status === 200)
+            var json = res.body
+            json.should.have.property('error')
+            assert(json.error === true)
             done()
         })
     })
@@ -98,7 +134,6 @@ describe('A test run is the data relating to the execution rate of tests per day
             db.collection('testruns', {}, function(err, testruns) {
                 var q = {"name":testName}
                 testruns.update(q,{$set:{state : "complete"}}, function(err,result){
-                    console.log(result)
                     superagent.put('http://localhost:3000/reporting/api/testruns/')
                     .set("Content-Type","application/json")
                     .send(newdata).end(function(err, res){
@@ -113,20 +148,20 @@ describe('A test run is the data relating to the execution rate of tests per day
             })
         })
     })
-    // it('Should delete a test run',function(done){
-    //     db.open(function(err, db) {
-    //         db.collection('testruns', {}, function(err, testruns) {
-    //             var q = {"name":testName}
-    //             testruns.find(q, function(err,result){
-    //                 should.exist(result)
-    //                 superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
-    //                     testruns.findOne(q,function(err,result){
-    //                         should.not.exist(result)
-    //                         done()
-    //                     })
-    //                 })
-    //             })
-    //         })
-    //     })
-    // })
+    it('Should delete a test run',function(done){
+        db.open(function(err, db) {
+            db.collection('testruns', {}, function(err, testruns) {
+                var q = {"name":testName}
+                testruns.find(q, function(err,result){
+                    should.exist(result)
+                    superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
+                        testruns.findOne(q,function(err,result){
+                            should.not.exist(result)
+                            done()
+                        })
+                    })
+                })
+            })
+        })
+    })
 })
