@@ -20,7 +20,7 @@ router.get('/api/alfresco/:version/defects/open', trend.updateDefectTrend);
 router.get('/api/alfresco/:version/defects/open/summary/csv', trend.getDefectsCSV)
 router.get('/api/alfresco/:version/defects/open/summary',trend.getDefectTrend)
 /**
- * Scurve data per produc and test run.
+ * Scurve data per test run.
  */
 router.get('/api/alfresco/:version/scurve/:sday/:smonth/:syear/:eday/:emonth/:eyear/:totalTC', scurve.getScurveProjection)
 router.get('/api/alfresco/:version/:run/scurve', scurve.getReport)
@@ -29,7 +29,7 @@ router.post('/api/alfresco/:version/:run/scurve', scurve.create)
 /**
  * Create Test Run.
  */
- router.get('/api/testruns/:name/start',testruns.start)
+ router.get('/api/testruns/:name/start', testruns.start)
  router.put('/api/testruns/:name', testruns.addEntry)
  router.get('/api/testruns/:name',testruns.get)
  router.delete('/api/testruns/:name',testruns.delete)

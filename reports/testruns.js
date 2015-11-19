@@ -92,9 +92,11 @@ module.exports ={
         return data
     },
     start: function(req, res){
-        testruns.update({"name":name,"state":"ready"},{"state":"running"},function(err,result){
+        var name = req.params.name
+        testruns.update({"name":name,"state":"ready"},{$set:{"state":"running"}},function(err,result){
             if(err){
-                res.send({err:true, err:err.err})
+                res.send({"err":true, "msg":err.err})
+                return
             }
             res.send({err:false})
         })

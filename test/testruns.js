@@ -5,13 +5,15 @@ var should = require('should')
 var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo, {safe:true})
-
+//Test run collection
+var testruns
 before('Prepare db',function(done){
     db.open(function(err, db) {
         db.collection('testruns').drop()
         db.collection('testruns').ensureIndex({name:1}, {unique:true},function(err,res){
             done()
         })
+        testruns = db.collection('testruns', {}, function(err, testruns){})
     })
 })
 var testName = "mytest";
@@ -130,7 +132,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             json.should.have.property('endDate')
             assert(json.endDate === '12/12/2200')
             json.should.have.property('tc')
-                assert(json.tc === 100)
+            assert(json.tc === 100)
             json.should.have.property('state')
             assert(json.state === 'ready')
             json.should.have.property('entries')
@@ -142,67 +144,69 @@ describe('The test run captures the data relating to test execution of a run, wh
     })
     it('Should not allow update of test run if state isnt ready', function(done){
         //update data state in mongodb
-        db.open(function(err, db) {
-            db.collection('testruns', {}, function(err, testruns) {
-                testruns.update(q,{$set:{state : "complete"}}, function(err,result){
-                    superagent.put('http://localhost:3000/reporting/api/testruns/')
-                    .set("Content-Type","application/json")
-                    .send(newdata).end(function(err, res){
-                        var json = res.body
-                        assert(res.status === 200)
-                        json.should.have.property('error')
-                        should.equal(json.error,true)
+        testruns.update(q,{$set:{state : "complete"}}, function(err,result){
+            superagent.put('http://localhost:3000/reporting/api/testruns/')
+            .set("Content-Type","application/json")
+            .send(newdata).end(function(err, res){
+                var json = res.body
+                assert(res.status === 200)
+                json.should.have.property('error')
+                should.equal(json.error,true)
+                done()
+            })
+        })
+    })
+    it('should start a test run',function(done){
+        testruns.update(q,{$set:{"state":"ready"}},function(error,resultUpdate){
+            testruns.findOne(q,function(err,result){
+                should.equal(result.state, "ready")
+                superagent.get('http://localhost:3000/reporting/api/testruns/'+ testName + '/start').end(function(err,res){
+                    var json = res.body
+                    assert(res.status === 200)
+                    should.equal(json.err,false)
+                    testruns.findOne(q,function(err1,result1){
+                        should.equal(result1.state, "running")
                         done()
                     })
                 })
             })
         })
-    })
-    // if('should start a test run',function(done){
-    //     superagent.get('http://localhost:3000/reporting/api/testruns/'+ testName)
-    // })
-    it('should be able to update entries with a new entry', function(done){
-        db.open(function(err, db) {
-            db.collection('testruns', {}, function(err, testruns) {
-                testruns.findOne(q,function(error,result){
-                    should.equal(result.entries.length,0)
-                    superagent.put('http://localhost:3000/reporting/api/testruns/'+ testName)
-                    .set("Content-Type","application/json")
-                    .send(dataEntry).end(function(err,res){
-                        testruns.findOne(q,function(error,result){
-                            should.equal(result.entries.length,1)
-                            var entry = result.entries[0]
-                            entry.should.have.property('date')
-                            entry.should.have.property('defectTarget')
-                            entry.should.have.property('defectActual')
-                            entry.should.have.property('testRemaining')
-                            entry.should.have.property('testExecuted')
-                            entry.should.have.property('failedTest')
 
-                            should.equal(entry.date, '14/12//2015' ,"date value")
-                            should.equal(entry.defectTarget, 10 ,"defectTarget")
-                            should.equal(entry.defectActual, 20 ,"defectActual")
-                            should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
-                            should.equal(entry.testExecuted, 100 ,"testExecuted value")
-                            should.equal(entry.failedTest, 40 ,"failedTest value")
-                            done()
-                        })
-                    })
+    })
+    it('should be able to update entries with a new entry', function(done){
+        testruns.findOne(q,function(error,result){
+            should.equal(result.entries.length,0)
+            superagent.put('http://localhost:3000/reporting/api/testruns/'+ testName)
+            .set("Content-Type","application/json")
+            .send(dataEntry).end(function(err,res){
+                testruns.findOne(q,function(error,result){
+                    should.equal(result.entries.length,1)
+                    var entry = result.entries[0]
+                    entry.should.have.property('date')
+                    entry.should.have.property('defectTarget')
+                    entry.should.have.property('defectActual')
+                    entry.should.have.property('testRemaining')
+                    entry.should.have.property('testExecuted')
+                    entry.should.have.property('failedTest')
+
+                    should.equal(entry.date, '14/12//2015' ,"date value")
+                    should.equal(entry.defectTarget, 10 ,"defectTarget")
+                    should.equal(entry.defectActual, 20 ,"defectActual")
+                    should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
+                    should.equal(entry.testExecuted, 100 ,"testExecuted value")
+                    should.equal(entry.failedTest, 40 ,"failedTest value")
+                    done()
                 })
             })
         })
     })
     it('Should delete a test run',function(done){
-        db.open(function(err, db) {
-            db.collection('testruns', {}, function(err, testruns) {
-                testruns.find(q, function(err,result){
-                    should.exist(result)
-                    superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
-                        testruns.findOne(q,function(err,result){
-                            should.not.exist(result)
-                            done()
-                        })
-                    })
+        testruns.find(q, function(err,result){
+            should.exist(result)
+            superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
+                testruns.findOne(q,function(err,result){
+                    should.not.exist(result)
+                    done()
                 })
             })
         })
