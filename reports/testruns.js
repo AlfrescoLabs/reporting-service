@@ -42,7 +42,9 @@ module.exports ={
                 return
             }
         })
-        testruns.update({ "name" : data.name, "state" : "ready" }, data, { upsert: true }, function(err, result){
+        testruns.update({ "name" : data.name, "state" : "ready" },
+                        data,
+                        { upsert: true }, function(err, result){
             if(err){
                 res.send({error:true,msg:err.err})
                 return
@@ -53,7 +55,9 @@ module.exports ={
     addEntry : function(req, res){
         var name = req.params.name
         var data = req.body
-        testruns.update({ "name": name , "state" : "running" }, {$addToSet:{"entries":data}},{upsert: true},function(err ,result){
+        testruns.update({ "name": name , "state" : "running" },
+                        {$addToSet:{"entries":data}},
+                        {upsert: true},function(err ,result){
             if(err){
                 res.send({err:true,msg : err.err})
                 return
@@ -92,7 +96,9 @@ module.exports ={
     },
     start: function(req, res){
         var name = req.params.name
-        testruns.update({"name":name,"state":"ready"},{$set:{"state":"running"}},function(err,result){
+        testruns.update({"name":name,"state":"ready"},
+                        {$set:{"state":"running"}},
+                        function(err,result){
             if(err){
                 res.send({"err":true, "msg":err.err})
                 return
@@ -102,7 +108,8 @@ module.exports ={
     },
     stop: function(req, res){
         var name = req.params.name
-        testruns.update({"name":name},{$set:{"state":"finished"}},function(err,result){
+        testruns.update({"name":name},
+                        {$set:{"state":"finished"}},function(err,result){
             if(err){
                 res.send({"err":true, "msg":err.err})
                 return
