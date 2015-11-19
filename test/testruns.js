@@ -158,6 +158,9 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
+    // if('should start a test run',function(done){
+    //     superagent.get('http://localhost:3000/reporting/api/testruns/'+ testName)
+    // })
     it('should be able to update entries with a new entry', function(done){
         db.open(function(err, db) {
             db.collection('testruns', {}, function(err, testruns) {

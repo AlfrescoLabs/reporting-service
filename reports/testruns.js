@@ -90,6 +90,13 @@ module.exports ={
                 data.targetDate = targetDate
             }
         return data
+    },
+    start: function(req, res){
+        testruns.update({"name":name,"state":"ready"},{"state":"running"},function(err,result){
+            if(err){
+                res.send({err:true, err:err.err})
+            }
+            res.send({err:false})
+        })
     }
-
 }
