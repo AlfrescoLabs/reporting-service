@@ -99,7 +99,7 @@ describe('The test run captures the data relating to test execution of a run, wh
                 json.should.have.property('endDate')
                 assert(json.endDate === '12/12/2100')
                 json.should.have.property('tc')
-                    assert(json.tc === 1000)
+                assert(json.tc === 1000)
                 json.should.have.property('state')
                 assert(json.state === 'ready')
                 json.should.have.property('entries')
