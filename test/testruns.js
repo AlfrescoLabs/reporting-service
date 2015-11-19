@@ -108,7 +108,7 @@ describe('The test run captures the data relating to test execution of a run, wh
                 done()
             })
     })
-    it('Should not allow to create a test run that already exists',function(done){
+    it('Should not create a duplicate test run when one already exists',function(done){
         superagent.post('http://localhost:3000/reporting/api/testruns/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
@@ -142,7 +142,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             done()
         })
     })
-    it('Should not allow update of test run if state isnt ready', function(done){
+    it('Should not add data to test run entries if state isnt running', function(done){
         //update data state in mongodb
         testruns.update(q,{$set:{state : "complete"}}, function(err,result){
             superagent.put('http://localhost:3000/reporting/api/testruns/')
@@ -171,7 +171,6 @@ describe('The test run captures the data relating to test execution of a run, wh
                 })
             })
         })
-
     })
     it('should be able to update entries with a new entry', function(done){
         testruns.findOne(q,function(error,result){
@@ -182,21 +181,41 @@ describe('The test run captures the data relating to test execution of a run, wh
                 testruns.findOne(q,function(error,result){
                     should.equal(result.entries.length,1)
                     var entry = result.entries[0]
-                    entry.should.have.property('date')
-                    entry.should.have.property('defectTarget')
-                    entry.should.have.property('defectActual')
-                    entry.should.have.property('testRemaining')
-                    entry.should.have.property('testExecuted')
-                    entry.should.have.property('failedTest')
-
-                    should.equal(entry.date, '14/12//2015' ,"date value")
-                    should.equal(entry.defectTarget, 10 ,"defectTarget")
-                    should.equal(entry.defectActual, 20 ,"defectActual")
-                    should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
-                    should.equal(entry.testExecuted, 100 ,"testExecuted value")
-                    should.equal(entry.failedTest, 40 ,"failedTest value")
+                    validate(entry)
                     done()
                 })
+            })
+        })
+    })
+
+    it('should update state test run to finished',function(done){
+        testruns.findOne(q,function(err,result){
+            should.equal(result.state, "running")
+            superagent.get('http://localhost:3000/reporting/api/testruns/'+ testName + '/stop').end(function(err,res){
+                var json = res.body
+                assert(res.status === 200)
+                should.equal(json.err,false)
+                testruns.findOne(q,function(err1,result1){
+                    should.equal(result1.state, "finished")
+                    done()
+                })
+            })
+        })
+    })
+    it('should not ba able to add entry to test run when state is finished',function(done){
+        testruns.findOne(q,function(err,result){
+            dataEntry.date = "21/12/2015"
+            dataEntry.tc = "1000"
+            should.equal(result.state, "finished")
+            should.equal(result.entries.length, 1)
+            superagent.put('http://localhost:3000/reporting/api/testruns/'+ testName)
+                .set("Content-Type","application/json")
+                .send(dataEntry).end(function(err,res){
+                    testruns.findOne(q,function(e,dbres){
+                        should.equal(dbres.entries.length,1)
+                        validate(dbres.entries[0])
+                        done()
+                    })
             })
         })
     })
@@ -211,4 +230,19 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
+    function validate(entry){
+        entry.should.have.property('date')
+        entry.should.have.property('defectTarget')
+        entry.should.have.property('defectActual')
+        entry.should.have.property('testRemaining')
+        entry.should.have.property('testExecuted')
+        entry.should.have.property('failedTest')
+
+        should.equal(entry.date, '14/12//2015' ,"date value")
+        should.equal(entry.defectTarget, 10 ,"defectTarget")
+        should.equal(entry.defectActual, 20 ,"defectActual")
+        should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
+        should.equal(entry.testExecuted, 100 ,"testExecuted value")
+        should.equal(entry.failedTest, 40 ,"failedTest value")
+    }
 })

@@ -53,8 +53,7 @@ module.exports ={
     addEntry : function(req, res){
         var name = req.params.name
         var data = req.body
-        //"state" : "running"
-        testruns.update({ "name": name }, {$addToSet:{"entries":data}},{upsert: true},function(err ,result){
+        testruns.update({ "name": name , "state" : "running" }, {$addToSet:{"entries":data}},{upsert: true},function(err ,result){
             if(err){
                 res.send({err:true,msg : err.err})
                 return
@@ -83,7 +82,7 @@ module.exports ={
             "startDate":startDate,
             "endDate": endDate,
             "tc" : tc,
-            "state": "ready", // the 3 states: completed, running, ready
+            "state": "ready", // the 3 states: ready, running, finished
             "entries":[]
             }
             if(targetDate !== undefined && targetDate !== null){
@@ -100,5 +99,16 @@ module.exports ={
             }
             res.send({err:false})
         })
+    },
+    stop: function(req, res){
+        var name = req.params.name
+        testruns.update({"name":name},{$set:{"state":"finished"}},function(err,result){
+            if(err){
+                res.send({"err":true, "msg":err.err})
+                return
+            }
+            res.send({err:false})
+        })
     }
+
 }
