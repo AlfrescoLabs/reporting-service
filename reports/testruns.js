@@ -1,6 +1,7 @@
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo)
 var testruns = db.collection('testruns').ensureIndex({name:1}, {unique:true},function(err,res){})
+
 module.exports ={
     create : function(req,res){
         var data = module.exports.parseTestRun(req,function(err,result){
@@ -41,14 +42,24 @@ module.exports ={
                 return
             }
         })
-        var query = { "name" : data.name, "state" : "ready" }
-
-        testruns.update(query, data, { upsert: true }, function(err, result){
+        testruns.update({ "name" : data.name, "state" : "ready" }, data, { upsert: true }, function(err, result){
             if(err){
                 res.send({error:true,msg:err.err})
                 return
             }
             res.send(data)
+        })
+    },
+    addEntry : function(req, res){
+        var name = req.params.name
+        var data = req.body
+        //"state" : "running"
+        testruns.update({ "name": name }, {$addToSet:{"entries":data}},{upsert: true},function(err ,result){
+            if(err){
+                res.send({err:true,msg : err.err})
+                return
+            }
+            res.send({err:false})
         })
     },
 
@@ -72,7 +83,7 @@ module.exports ={
             "startDate":startDate,
             "endDate": endDate,
             "tc" : tc,
-            "state": "ready", // the 3 states completed, started, ready
+            "state": "ready", // the 3 states: completed, running, ready
             "entries":[]
             }
             if(targetDate !== undefined && targetDate !== null){

@@ -6,7 +6,7 @@ var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo, {safe:true})
 
-before(function(done){
+before('Prepare db',function(done){
     db.open(function(err, db) {
         db.collection('testruns').drop()
         db.collection('testruns').ensureIndex({name:1}, {unique:true},function(err,res){
@@ -25,6 +25,18 @@ var newdata = {"name":testName,
             "endDate": "12/12/2200",
             "targetDate" :"12/12/2200",
             "tc" : 100}
+
+var dataEntry = {
+    date: '14/12//2015',
+    defectTarget:10,
+    defectActual:20,
+    testRemaining:4000,
+    testExecuted:100,
+    failedTest:40
+}
+
+var q = {"name":testName}
+
 describe('The test run captures the data relating to test execution of a run, which is a period of time defined by a start and end date.' ,function(done){
     it('Should create and store a test run',function(done){
         superagent.post('http://localhost:3000/reporting/api/testruns/')
@@ -132,7 +144,6 @@ describe('The test run captures the data relating to test execution of a run, wh
         //update data state in mongodb
         db.open(function(err, db) {
             db.collection('testruns', {}, function(err, testruns) {
-                var q = {"name":testName}
                 testruns.update(q,{$set:{state : "complete"}}, function(err,result){
                     superagent.put('http://localhost:3000/reporting/api/testruns/')
                     .set("Content-Type","application/json")
@@ -141,8 +152,38 @@ describe('The test run captures the data relating to test execution of a run, wh
                         assert(res.status === 200)
                         json.should.have.property('error')
                         should.equal(json.error,true)
-
                         done()
+                    })
+                })
+            })
+        })
+    })
+    it('should be able to update entries with a new entry', function(done){
+        db.open(function(err, db) {
+            db.collection('testruns', {}, function(err, testruns) {
+                testruns.findOne(q,function(error,result){
+                    should.equal(result.entries.length,0)
+                    superagent.put('http://localhost:3000/reporting/api/testruns/'+ testName)
+                    .set("Content-Type","application/json")
+                    .send(dataEntry).end(function(err,res){
+                        testruns.findOne(q,function(error,result){
+                            should.equal(result.entries.length,1)
+                            var entry = result.entries[0]
+                            entry.should.have.property('date')
+                            entry.should.have.property('defectTarget')
+                            entry.should.have.property('defectActual')
+                            entry.should.have.property('testRemaining')
+                            entry.should.have.property('testExecuted')
+                            entry.should.have.property('failedTest')
+
+                            should.equal(entry.date, '14/12//2015' ,"date value")
+                            should.equal(entry.defectTarget, 10 ,"defectTarget")
+                            should.equal(entry.defectActual, 20 ,"defectActual")
+                            should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
+                            should.equal(entry.testExecuted, 100 ,"testExecuted value")
+                            should.equal(entry.failedTest, 40 ,"failedTest value")
+                            done()
+                        })
                     })
                 })
             })
@@ -151,7 +192,6 @@ describe('The test run captures the data relating to test execution of a run, wh
     it('Should delete a test run',function(done){
         db.open(function(err, db) {
             db.collection('testruns', {}, function(err, testruns) {
-                var q = {"name":testName}
                 testruns.find(q, function(err,result){
                     should.exist(result)
                     superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
