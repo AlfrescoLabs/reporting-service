@@ -6,7 +6,6 @@ var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo)
 
-
 var expectedScurve = [
 { day: "1/11/2015", tc: 0},
 { day: "2/11/2015", tc: 1},

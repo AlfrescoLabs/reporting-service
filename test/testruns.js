@@ -41,7 +41,7 @@ var q = {"name":testName}
 
 describe('The test run captures the data relating to test execution of a run, which is a period of time defined by a start and end date.' ,function(done){
     it('Should create and store a test run',function(done){
-        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        superagent.post('http://localhost:3000/reporting/api/alfresco/testruns/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
             assert(res.status === 200)
@@ -53,7 +53,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     })
     it('Should not create a test run as tc is missing',function(done){
         var baddata = {"name":"missingTC", "startDate":"12/11/2100", "endDate": "12/12/2100", "targetDate" : null}
-        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        superagent.post('http://localhost:3000/reporting/api/alfresco/testruns/')
         .set("Content-Type","application/json")
         .send(baddata).end(function(err, res){
             assert(res.status === 200)
@@ -65,7 +65,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     })
     it('Should not create a test run as end date is null',function(done){
         var baddata = {"name":"missingTC", "startDate":"12/11/2100", "endDate": null, "targetDate" : null}
-        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        superagent.post('http://localhost:3000/reporting/api/alfresco/testruns/')
         .set("Content-Type","application/json")
         .send(baddata).end(function(err, res){
             assert(res.status === 200)
@@ -77,7 +77,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     })
     it('Should not create a test run as start date is undefined',function(done){
         var baddata = {"name":"missingTC", "startDate": undefined, "endDate": "12/11/2100", "targetDate" : null}
-        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        superagent.post('http://localhost:3000/reporting/api/alfresco/testruns/')
         .set("Content-Type","application/json")
         .send(baddata).end(function(err, res){
             assert(res.status === 200)
@@ -88,7 +88,7 @@ describe('The test run captures the data relating to test execution of a run, wh
         })
     })
     it('Should get a test run',function(done){
-        superagent.get('http://localhost:3000/reporting/api/testruns/' + testName).end(
+        superagent.get('http://localhost:3000/reporting/api/alfresco/testruns/' + testName).end(
             function(error,res){
                 var json = res.body
                 assert(res.status === 200)
@@ -109,7 +109,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
     })
     it('Should not create a duplicate test run when one already exists',function(done){
-        superagent.post('http://localhost:3000/reporting/api/testruns/')
+        superagent.post('http://localhost:3000/reporting/api/alfresco/testruns/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
             assert(res.status === 200)
@@ -120,7 +120,7 @@ describe('The test run captures the data relating to test execution of a run, wh
         })
     })
     it('Should allow update of test run if state is ready', function(done){
-        superagent.put('http://localhost:3000/reporting/api/testruns/')
+        superagent.put('http://localhost:3000/reporting/api/alfresco/testruns/')
         .set("Content-Type","application/json")
         .send(newdata).end(function(err, res){
             var json = res.body
@@ -145,7 +145,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     it('Should not add data to test run entries if state isnt running', function(done){
         //update data state in mongodb
         testruns.update(q,{$set:{state : "complete"}}, function(err,result){
-            superagent.put('http://localhost:3000/reporting/api/testruns/')
+            superagent.put('http://localhost:3000/reporting/api/alfresco/testruns/')
             .set("Content-Type","application/json")
             .send(newdata).end(function(err, res){
                 var json = res.body
@@ -160,7 +160,7 @@ describe('The test run captures the data relating to test execution of a run, wh
         testruns.update(q,{$set:{"state":"ready"}},function(error,resultUpdate){
             testruns.findOne(q,function(err,result){
                 should.equal(result.state, "ready")
-                superagent.get('http://localhost:3000/reporting/api/testruns/'+ testName + '/start').end(function(err,res){
+                superagent.get('http://localhost:3000/reporting/api/alfresco/testruns/'+ testName + '/start').end(function(err,res){
                     var json = res.body
                     assert(res.status === 200)
                     should.equal(json.err,false)
@@ -175,7 +175,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     it('should be able to update entries with a new entry', function(done){
         testruns.findOne(q,function(error,result){
             should.equal(result.entries.length,0)
-            superagent.put('http://localhost:3000/reporting/api/testruns/'+ testName)
+            superagent.put('http://localhost:3000/reporting/api/alfresco/testruns/'+ testName)
             .set("Content-Type","application/json")
             .send(dataEntry).end(function(err,res){
                 testruns.findOne(q,function(error,result){
@@ -191,7 +191,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     it('should update state test run to finished',function(done){
         testruns.findOne(q,function(err,result){
             should.equal(result.state, "running")
-            superagent.get('http://localhost:3000/reporting/api/testruns/'+ testName + '/stop').end(function(err,res){
+            superagent.get('http://localhost:3000/reporting/api/alfresco/testruns/'+ testName + '/stop').end(function(err,res){
                 var json = res.body
                 assert(res.status === 200)
                 should.equal(json.err,false)
@@ -208,7 +208,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             dataEntry.tc = "1000"
             should.equal(result.state, "finished")
             should.equal(result.entries.length, 1)
-            superagent.put('http://localhost:3000/reporting/api/testruns/'+ testName)
+            superagent.put('http://localhost:3000/reporting/api/alfresco/testruns/'+ testName)
                 .set("Content-Type","application/json")
                 .send(dataEntry).end(function(err,res){
                     testruns.findOne(q,function(e,dbres){
@@ -222,7 +222,7 @@ describe('The test run captures the data relating to test execution of a run, wh
     it('Should delete a test run',function(done){
         testruns.find(q, function(err,result){
             should.exist(result)
-            superagent.del('http://localhost:3000/reporting/api/testruns/'+ testName).end(function(err,res){
+            superagent.del('http://localhost:3000/reporting/api/alfresco/testruns/'+ testName).end(function(err,res){
                 testruns.findOne(q,function(err,result){
                     should.not.exist(result)
                     done()
