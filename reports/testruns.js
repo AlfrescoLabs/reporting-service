@@ -116,6 +116,9 @@ module.exports ={
             }
             res.send({err:false})
         })
+    },
+    getBurnDownReport:function(req,res){
+
     }
 
 }
