@@ -1,63 +1,33 @@
 /*
- * Manages data relating to scurve
+ * Create scurve projection data.
  */
 
-var config = require('../config')
-var db = require('mongoskin').db(config.mongo)
 module.exports = {
-    getReport: function(req,res){
-        //TODO ADD Query to mongo to get cycle
-        var startDate = "16/11/2015"
-        var endDate = "09/12/2015"
-        var totaclTC = 3593
-        var data = {"product":"5.1",
-                    "run":"1",
-                    "totalTC":totaclTC,
-                    "end":"10/11/2015",
-                    "start":"1/11/2015",
-                    data:
-                    [{"id":1,"day":"1/11/2015","tc":"66"},
-                    {"id":2,"day":"2/11/2015","tc":"44"},
-                    {"id":3,"day":"3/11/2015","tc":"46"},
-                    {"id":4,"day":"4/11/2015","tc":"56"},
-                    {"id":5,"day":"5/11/2015","tc":"77"},
-                    {"id":6,"day":"6/11/2015","tc":"100"}],
-                    "scurve": getScurve(startDate,endDate,totaclTC)
-                };
-        res.send(data)
-    },
-    createTest : function(req,res){
-        var tests = db.collection()
-    },
-    create: function(req,res){
-        var version = req.params.version;
-        var scurve = db.collection(version + '-scurve')
-
-        scurve.insert({"name":"me"},function(err,result){
-            if(err){console.log(err)}
-            console.log(result)
-            res.send(result);
-        })
-    },
-    updateReport : function(req, res){
-        var scurve = db.collection(version + 'scurve');
-    },
-
-    getScurveProjection: function(req,res){
-        var totalTC = req.params.totalTC
-        var sday = req.params.sday
-        var smonth = req.params.smonth
-        var syear = req.params.syear
-        var eday = req.params.eday
-        var emonth = req.params.emonth
-        var eyear = req.params.eyear
-
-        var startDate = sday+ "/" + smonth + "/" + syear
-        var endDate = eday+ "/" + emonth + "/" + eyear
-
+    // getReport: function(req,res){
+    //     //TODO ADD Query to mongo to get cycle
+    //     var startDate = "16/11/2015"
+    //     var endDate = "09/12/2015"
+    //     var totaclTC = 3593
+    //     var data = {"product":"5.1",
+    //                 "run":"1",
+    //                 "totalTC":totaclTC,
+    //                 "end":"10/11/2015",
+    //                 "start":"1/11/2015",
+    //                 data:
+    //                 [{"id":1,"day":"1/11/2015","tc":"66"},
+    //                 {"id":2,"day":"2/11/2015","tc":"44"},
+    //                 {"id":3,"day":"3/11/2015","tc":"46"},
+    //                 {"id":4,"day":"4/11/2015","tc":"56"},
+    //                 {"id":5,"day":"5/11/2015","tc":"77"},
+    //                 {"id":6,"day":"6/11/2015","tc":"100"}],
+    //                 "scurve": getScurve(startDate,endDate,totaclTC)
+    //             };
+    //     res.send(data)
+    // },
+    getScurve: function(startDate, endDate, totalTC){
         var scurve = getScurve(startDate,endDate,totalTC)
-        res.send(scurve)
-    },
+        return scurve
+    }
 }
 function parseDateString(date){
     var y = date.split('/')[2];
@@ -73,9 +43,9 @@ function dateToString(date){
 }
 function getScurve(startDate,endDate,totaclTC){
     var results=[]
-    var days = diff(endDate,startDate);
+    var days = diff(endDate,startDate) + 1;
     var start = parseDateString(startDate);
-      for(i = 0 ; i< days; i++){
+      for(i = 0 ; i < days; i++){
           var dateDisplay = new Date(start);
           var t = dateDisplay.setDate(dateDisplay.getDate() +  i)
           var formattedDate = dateToString(new Date(t))

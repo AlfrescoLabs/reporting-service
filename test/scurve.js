@@ -2,9 +2,8 @@ var assert = require('assert')
 var expect = require('expect')
 var superagent = require('superagent')
 var should = require('should')
-var app = require('../app')
-var config = require('../config')
-var db = require('mongoskin').db(config.mongo)
+var scurve = require('../reports/scurve')
+
 
 var expectedScurve = [
 { day: "1/11/2015", tc: 0},
@@ -27,34 +26,8 @@ var expectedScurve = [
 describe('reporting/api/alfresco/:version/scurve/:startDate/:endDate/:totalTC',function(done){
     it('Should get array of scurve projection based on start date,end date and total test cases', function(done) {
       this.timeout(15000); // Setting a longer timeout
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/scurve/1/11/2015/16/11/2015/100').end(function(err, res) {
-        assert(res.status === 200)
-        expect(expectedScurve).toEqual(res.body)
-        done()
-      })
+      var curve = scurve.getScurve('1/11/2015','15/11/2015',100)
+      expect(expectedScurve).toEqual(curve)
+      done()
     })
 })
-// describe('It should be able to create, update and find an scurve entry',function(done){
-//     it('Should create an entry in mongo', function(done) {
-//         superagent.post('http://localhost:3000/reporting/api/alfresco/5.1/1/scurve')
-//             .send({field: "Test string."})
-//             .end(function(error,res){
-//                 assert(res.status === 200)
-//                 done()
-//         })
-//     })
-//     it('Should get an entry in mongo', function(done) {
-//         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/1/scurve')
-//             .end(function(error,res){
-//             assert(res.status === 200)
-//             var json = res.body
-//             json.should.have.property('name')
-//             json.should.have.property('run')
-//             json.should.have.property('start')
-//             json.should.have.property('end')
-//             json.should.have.property('totalTC')
-//
-//             done()
-//         })
-//     })
-// })
