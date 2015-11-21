@@ -1,7 +1,13 @@
 var config = require('../config')
+var scurve = require('../reports/scurve')
 var db = require('mongoskin').db(config.mongo)
 var testruns = db.collection('testruns').ensureIndex({name:1}, {unique:true},function(err,res){})
 
+function getTestRunData(name, callback){
+    testruns.findOne({"name":name}, function(err,result){
+        callback(result)
+    })
+}
 module.exports ={
     create : function(req,res){
         var data = module.exports.parseTestRun(req,function(err,result){
@@ -21,13 +27,9 @@ module.exports ={
     },
     get:function(req,res){
         var name = req.params.name
-        testruns.findOne({"name":name}, function(err,result){
-                if(err){
-                    res.send({error:true,msg:err.err})
-                    return
-                }
-                res.send(result)
-            })
+        getTestRunData(name,function(result){
+            res.send(result)
+        })
     },
     delete: function(req,res){
         var name = req.params.name
@@ -118,7 +120,11 @@ module.exports ={
         })
     },
     getBurnDownReport:function(req,res){
+        getTestRunData(req.params.name,function(result){
+
+            result.scurve= scurve.getScurve(result.startDate, result.endDate, result.tc)
+            res.send(result)
+        })
 
     }
-
 }

@@ -21,12 +21,6 @@ router.get('/api/:product/:version/defects/open/:day/:month/:year', trend.update
 router.get('/api/:product/:version/defects/open', trend.updateDefectTrend);
 router.get('/api/:product/:version/defects/open/summary/csv', trend.getDefectsCSV)
 router.get('/api/:product/:version/defects/open/summary',trend.getDefectTrend)
-/**
- * Scurve data per test run.
- */
-router.get('/api/:product/:version/scurve/:sday/:smonth/:syear/:eday/:emonth/:eyear/:totalTC', scurve.getScurveProjection)
-
-router.post('/api/:product/:version/:run/scurve', scurve.create)
 
 /**
  * Create Test Run.
@@ -38,5 +32,5 @@ router.post('/api/:product/:version/:run/scurve', scurve.create)
  router.delete('/api/:product/testrun/:name',testruns.delete)
  router.post('/api/:product/testrun/', testruns.create)
  router.put('/api/:product/testrun', testruns.update)
- router.get('/api/:product/testrun/:name/burndown', testruns.getBurnDownReport)
+ router.get('/api/:product/testrun/:name/report', testruns.getBurnDownReport)
 module.exports = router

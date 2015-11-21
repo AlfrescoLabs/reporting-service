@@ -181,7 +181,7 @@ describe('The test run captures the data relating to test execution of a run, wh
                 testruns.findOne(q,function(error,result){
                     should.equal(result.entries.length,1)
                     var entry = result.entries[0]
-                    validate(entry)
+                    validateDateEntry(entry)
                     done()
                 })
             })
@@ -213,10 +213,27 @@ describe('The test run captures the data relating to test execution of a run, wh
                 .send(dataEntry).end(function(err,res){
                     testruns.findOne(q,function(e,dbres){
                         should.equal(dbres.entries.length,1)
-                        validate(dbres.entries[0])
+                        validateDateEntry(dbres.entries[0])
                         done()
                     })
             })
+        })
+    })
+    it('Should get burn down report',function(done){
+        superagent.get('http://localhost:3000/reporting/api/alfresco/testrun/' + testName + '/report').end(function(error, result){
+            var json = result.body
+            json.should.have.property('name')
+            assert(json.name === testName)
+            json.should.have.property('startDate')
+            assert(json.startDate === '12/11/2200')
+            json.should.have.property('endDate')
+            assert(json.endDate === '12/12/2200')
+            json.should.have.property('tc')
+            assert(json.tc === 100)
+            json.should.have.property('entries')
+            assert(json.entries.length === 1)
+            json.should.have.property('scurve')
+            done()
         })
     })
     it('Should delete a test run',function(done){
@@ -230,7 +247,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
-    function validate(entry){
+    function validateDateEntry(entry){
         entry.should.have.property('date')
         entry.should.have.property('defectTarget')
         entry.should.have.property('defectActual')
@@ -244,5 +261,21 @@ describe('The test run captures the data relating to test execution of a run, wh
         should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
         should.equal(entry.testExecuted, 100 ,"testExecuted value")
         should.equal(entry.failedTest, 40 ,"failedTest value")
+    }
+    function validateTestRun(run){
+        run.should.have.property('name')
+        should.equal(run.name, testName ,"name value")
+        run.should.have.property('startDate')
+        should.equal(run.startDate,'12/11/2200')
+        run.should.have.property('endDate')
+        assert(run.endDate === '12/12/2200')
+        run.should.have.property('tc')
+        assert(run.tc === 100)
+        run.should.have.property('state')
+        assert(run.state === 'ready')
+        run.should.have.property('entries')
+        assert(run.entries.length === 0)
+        run.should.have.property('targetDate')
+        assert(run.targetDate === '12/12/2200')
     }
 })
