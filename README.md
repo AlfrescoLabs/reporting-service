@@ -29,3 +29,21 @@ Store open defects from today.
 http://localhost:3000/reporting/api/alfresco/5.1/defects/open
 Display open defects trend summary for charting
 http://localhost:3000/reporting/api/alfresco/5.1/defects/open/summary
+
+### Testrun api
+Start test run
+GET http://localhost:3000/reporting/api/alfresco/testrun/name/start
+Stop test run
+GET http://localhost:3000/reporting/api/alfresco/testrun/name/stop
+Burn down
+GET http://localhost:3000/reporting/api/alfresco/testrun/name/report
+Get test run
+GET http://localhost:3000/reporting/api/alfresco/testrun/name
+Delete
+Del http://localhost:3000/reporting/api/alfresco/testrun/name
+Add data
+PUT http://localhost:3000/reporting/api/alfresco/testrun/name
+Update test run details
+PUT http://localhost:3000/reporting/api/alfresco/testrun/
+Create test run
+POST http://localhost:3000/reporting/api/alfresco/testrun/
