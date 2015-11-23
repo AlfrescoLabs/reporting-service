@@ -41,18 +41,34 @@ http://localhost:3000/reporting/api/alfresco/5.1/defects/open/summary
 ```
 ### Testrun api
 Start test run
+```
 GET http://localhost:3000/reporting/api/alfresco/5.1/testrun/name/start
+```
 Stop test run
+```
 GET http://localhost:3000/reporting/api/alfresco/5.1/testrun/name/stop
+```
 Burn down
+```
 GET http://localhost:3000/reporting/api/alfresco/5.1/testrun/name/report
-Get test run
-GET http://localhost:3000/reporting/api/alfresco/5.1/testrun/name
-Delete
-Del http://localhost:3000/reporting/api/alfresco/5.1/testrun/name
-Add data
-PUT http://localhost:3000/reporting/api/alfresco/5.1/testrun/name
-Update test run details
-PUT http://localhost:3000/reporting/api/alfresco/5.1/testrun/
+```
 Create test run
+```
 POST http://localhost:3000/reporting/api/alfresco/5.1/testrun/
+```
+Update test run details
+```
+PUT http://localhost:3000/reporting/api/alfresco/5.1/testrun/
+```
+Get test run
+```
+GET http://localhost:3000/reporting/api/alfresco/5.1/testrun/name
+```
+Add data
+```
+PUT http://localhost:3000/reporting/api/alfresco/5.1/testrun/name
+```
+Delete
+```
+Del http://localhost:3000/reporting/api/alfresco/5.1/testrun/name
+```
