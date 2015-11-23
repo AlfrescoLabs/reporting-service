@@ -3,15 +3,15 @@ var scurve = require('../reports/scurve')
 var db = require('mongoskin').db(config.mongo)
 
 
-function getTestRunData(product,name, callback){
-     db.collection(product + '-testruns').findOne({"name":name}, function(err,result){
+function getTestRunData(version,name, callback){
+     db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
         callback(result)
     })
 }
 module.exports ={
     create : function(req,res){
-        var product = req.params.product
-        var testruns = db.collection(product + '-testruns').ensureIndex({name:1}, {unique:true},function(err,res){})
+        var version = req.params.version
+        var testruns = db.collection(version + '-testruns').ensureIndex({name:1}, {unique:true},function(err,res){})
         var data = module.exports.parseTestRun(req,function(err,result){
             if(err){
                 res.send({error:true, msg : err})
@@ -29,15 +29,15 @@ module.exports ={
     },
     get:function(req,res){
         var name = req.params.name
-        var product = req.params.product
-        getTestRunData(product, name,function(result){
+        var version = req.params.version
+        getTestRunData(version, name,function(result){
             res.send(result)
         })
     },
     delete: function(req,res){
         var name = req.params.name
-        var product = req.params.product
-        db.collection(product + '-testruns').remove({"name":name},
+        var version = req.params.version
+        db.collection(version + '-testruns').remove({"name":name},
         function(err,result){
             res.send({error:false})
         })
@@ -49,8 +49,8 @@ module.exports ={
                 return
             }
         })
-        var product = req.params.product
-        db.collection(product + '-testruns').update(
+        var version = req.params.version
+        db.collection(version + '-testruns').update(
             { "name" : data.name, "state" : "ready" },
             data,
             { upsert: true }, function(err, result){
@@ -63,9 +63,9 @@ module.exports ={
     },
     addEntry : function(req, res){
         var name = req.params.name
-        var product = req.params.product
+        var version = req.params.version
         var data = req.body
-        db.collection(product + '-testruns').update(
+        db.collection(version + '-testruns').update(
             { "name": name , "state" : "running" },
             {$addToSet:{"entries":data}},
             {upsert: true},function(err ,result){
@@ -106,9 +106,9 @@ module.exports ={
         return data
     },
     start: function(req, res){
-        var product = req.params.product
+        var version = req.params.version
         var name = req.params.name
-        db.collection(product + '-testruns').update({"name":name,"state":"ready"},
+        db.collection(version + '-testruns').update({"name":name,"state":"ready"},
                         {$set:{"state":"running"}},
                         function(err,result){
             if(err){
@@ -120,8 +120,8 @@ module.exports ={
     },
     stop: function(req, res){
         var name = req.params.name
-        var product = req.params.product
-        db.collection(product + '-testruns').update({"name":name},
+        var version = req.params.version
+        db.collection(version + '-testruns').update({"name":name},
                         {$set:{"state":"finished"}},function(err,result){
             if(err){
                 res.send({"err":true, "msg":err.err})
@@ -131,7 +131,7 @@ module.exports ={
         })
     },
     getBurnDownReport:function(req,res){
-        getTestRunData(req.params.product, req.params.name,function(result){
+        getTestRunData(req.params.version, req.params.name,function(result){
 
             result.scurve = scurve.getScurve(result.startDate, result.endDate, result.tc)
             res.send(result)
