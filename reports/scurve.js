@@ -34,7 +34,7 @@ function getScurve(startDate,endDate,totaclTC){
           var e = 2.718281828459045
           var result = DE / (DE + Math.pow(e,(3 - 8 * DE)));
           var estimatedTC = Math.round(result * totaclTC);
-          results.push({"day" : formattedDate, "tc" : estimatedTC})
+          results.push({"date" : formattedDate, "tc" : estimatedTC})
       }
 
       function diff( date1, date2 ) {

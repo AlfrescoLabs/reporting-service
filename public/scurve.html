@@ -63,35 +63,45 @@
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json('reporting/api/alfresco/5.1/scurve/3', function(error, data) {
+    d3.json('reporting/api/alfresco/testrun/5.1-automan-run1/report', function(error, data) {
       if (error) {
         console.log(error);
         throw error;
       }
     x.domain(data.scurve.map(function(d) {
-      return d.day;
+      return d.date;
     }));
 
-    y.domain([0, d3.max(data.data, function(d) {
-        return data.totalTC;
-    })]);
+    y.domain([0, data.tc]);
 
 	  var lineGen = d3.svg.line()
 	    .x(function(d) {
             console.log(d)
-	      return x(d.day);
+	      return x(d.date);
 	    })
 	    .y(function(d) {
-	      return y(d.tc);
+	      return y(d.tc) || y(d.testExecuted);
 	    }).interpolate("basis");
+        var errorLineGen = d3.svg.line()
+  	    .x(function(d) {
+              console.log(d)
+  	      return x(d.date);
+  	    })
+  	    .y(function(d) {
+  	      return y(d.tc) || y(d.failedTest);
+  	    }).interpolate("basis");
 
-	  svg.append('svg:path')
-	    .attr('d', lineGen(data.data))
+    svg.append('svg:path')
+	    .attr('d', lineGen(data.entries))
 	    .attr('stroke', 'green')
 	    .attr('stroke-width', 2)
 	    .attr('fill', 'none');
-
-        svg.append('svg:path')
+    // svg.append('svg:path')
+ //  	    .attr('d', errorLineGen(data.entries))
+ //  	    .attr('stroke', 'red')
+ //  	    .attr('stroke-width', 2)
+ //  	    .attr('fill', 'none');
+    svg.append('svg:path')
   	    .attr('d', lineGen(data.scurve))
   	    .attr('stroke', 'blue')
   	    .attr('stroke-width', 2)
@@ -125,7 +135,7 @@
         .enter().append("g")
         .attr("class", "g")
         .attr("transform", function(d) {
-          return "translate(" + x(d.day) + ",0)";
+          return "translate(" + x(d.date) + ",0)";
         });
     });
   </script>
