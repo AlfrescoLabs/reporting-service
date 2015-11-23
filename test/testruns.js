@@ -9,11 +9,11 @@ var db = require('mongoskin').db(config.mongo, {safe:true})
 var testruns
 before('Prepare db',function(done){
     db.open(function(err, db) {
-        db.collection('testruns').drop()
-        db.collection('testruns').ensureIndex({name:1}, {unique:true},function(err,res){
+        db.collection('alfresco-testruns').drop()
+        db.collection('alfresco-testruns').ensureIndex({name:1}, {unique:true},function(err,res){
             done()
         })
-        testruns = db.collection('testruns', {}, function(err, testruns){})
+        testruns = db.collection('alfresco-testruns', {}, function(err, testruns){})
     })
 })
 var testName = "mytest";
