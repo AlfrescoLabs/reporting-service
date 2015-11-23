@@ -63,10 +63,9 @@
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json('reporting/api/alfresco/testrun/5.1-manual-run1/report', function(error, data) {
+    d3.json('reporting/api/alfresco/5.1/testrun/manual-run1/report', function(error, data) {
       if (error) {
         console.log(error);
-        throw error;
       }
     x.domain(data.scurve.map(function(d) {
       return d.date;

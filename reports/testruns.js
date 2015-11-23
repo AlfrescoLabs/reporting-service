@@ -4,7 +4,7 @@ var db = require('mongoskin').db(config.mongo)
 
 
 function getTestRunData(version,name, callback){
-     db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
+    db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
         callback(result)
     })
 }
@@ -132,7 +132,9 @@ module.exports ={
     },
     getBurnDownReport:function(req,res){
         getTestRunData(req.params.version, req.params.name,function(result){
-
+            if(result == undefined){
+                return res.end()
+            }
             result.scurve = scurve.getScurve(result.startDate, result.endDate, result.tc)
             res.send(result)
         })
