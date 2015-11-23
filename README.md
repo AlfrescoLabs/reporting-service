@@ -20,16 +20,25 @@ npm start
 
 ### Query JIRA and store data###
 Store defects created from today.
+```
 http://localhost:3000/reporting/api/alfresco/5.1/defects/created
+```
 Store defects created from a specific date.
+```
 http://localhost:3000/reporting/api/alfresco/5.1/defects/created/20/09/2015
+```
 Display defects created summary for charting
+```
 http://localhost:3000/reporting/api/alfresco/5.1/defects/created/summary
+```
 Store open defects from today.
+```
 http://localhost:3000/reporting/api/alfresco/5.1/defects/open
+```
 Display open defects trend summary for charting
+```
 http://localhost:3000/reporting/api/alfresco/5.1/defects/open/summary
-
+```
 ### Testrun api
 Start test run
 GET http://localhost:3000/reporting/api/alfresco/5.1/testrun/name/start
