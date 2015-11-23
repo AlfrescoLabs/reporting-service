@@ -12,12 +12,6 @@ npm start
  * Get open and closed defects from JIRA for a given day and store it.
  * Show all defects for the product release.
 
-## Examples
-
-### Get all open defects for product release
-
-
-
 ### Query JIRA and store data###
 Store defects created from today.
 ```
