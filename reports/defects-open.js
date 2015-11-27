@@ -55,6 +55,7 @@ module.exports = {
 
     function getData(callback) {
       var jql = 'project = ace AND status not in (closed, verified)' +
+        'AND labels in (triaged)' +
         'AND (fixVersion = 5.1) AND priority ' +
         'in (blocker, critical) AND type in (bug) ' +
         ' ORDER BY created DESC'
@@ -90,26 +91,26 @@ module.exports = {
             };
             if (issue.fields.labels.length > 0) {
               //check if pending
-              var status = issue.fields.status.name.toLowerCase()
-              if(status === 'ready to test' || status === 'in test'){
-                if (item.type === 'Blocker') {
-                  model.pending.blocker++;
+                var status = issue.fields.status.name.toLowerCase()
+                if(status === 'ready to test' || status === 'in test'){
+                    if (item.type === 'Blocker') {
+                        model.pending.blocker++;
+                    }
+                    if (item.type === 'Critical') {
+                        model.pending.critical++;
+                    }
+                    model.pending.issues.push(item);
+                } else {
+                    if (item.type === 'Blocker') {
+                        model.open.blocker++;
+                    }
+                    if (item.type === 'Critical') {
+                        model.open.critical++;
+                    }
+                    model.open.issues.push(item);
                 }
-                if (item.type === 'Critical') {
-                  model.pending.critical++;
-                }
-                model.pending.issues.push(item);
-                return;
-              }
             }
-            if (item.type === 'Blocker') {
-              model.open.blocker++;
-            }
-            if (item.type === 'Critical') {
-              model.open.critical++;
-            }
-            model.open.issues.push(item);
-          })
+        })
           model.open.count = model.open.issues.length
           model.pending.count = model.pending.issues.length
           callback(false);
