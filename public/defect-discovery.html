@@ -69,7 +69,7 @@
         console.log(error);
         throw error;
       }
-
+      data.reverse() //Reverse data order as the api returns the last 60 entries asc
       data.forEach(function(d) {
         var y0 = 0;
         d.defects = color.domain().map(function(name) {

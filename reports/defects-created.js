@@ -15,7 +15,7 @@ var headers = {
 module.exports = {
 
   /**
-   * Gets defects stroed in db
+   * Gets defects stroed in db of the last 60 entries
    */
   getDefects: function(req, res) {
     var version = req.params.version;
@@ -26,8 +26,8 @@ module.exports = {
           "dateDisplay" : 1,
           "open" : 1
         }).sort({
-          date: 1
-        }).toArray(function(err, result) {
+          date: -1
+      }).limit(60).toArray(function(err, result) {
           if (err) throw err;
           res.send(result);
         })

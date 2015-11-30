@@ -146,6 +146,7 @@ module.exports = {
   getDefectTrend: function(req, res) {
     var version = req.params.version;
     module.exports.update(req,function(){})
+    //Mongo query to get the last 60 days of entries
     db.collection(version + '-trend').find({}, {
       "date": 1,
       "dateDisplay": 1,
@@ -154,7 +155,7 @@ module.exports = {
       "pending": 1
     }).sort({
       date: -1
-    }).toArray(function(err, result) {
+  }).limit(60).toArray(function(err, result) {
       if (err) throw err;
       res.send(result);
     })
