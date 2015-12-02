@@ -98,7 +98,8 @@ module.exports ={
             "endDate": endDate,
             "tc" : tc,
             "state": "ready", // the 3 states: ready, running, finished
-            "entries":[]
+            "entries":[],
+            "testplans" : []
             }
             if(targetDate !== undefined && targetDate !== null){
                 data.targetDate = targetDate
