@@ -4,8 +4,8 @@ var should = require('should')
 var testlink = require('../reports/testlink')
 
 var data = {
-    'NotRun' : 21,
-    'Passed' : 187,
+    'NotRun' : 18,
+    'Passed' : 190,
     'Failed' : 7,
     'Blocked' :4
 }

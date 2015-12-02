@@ -1,5 +1,3 @@
-var assert = require('assert')
-var expect = require('expect')
 var superagent = require('superagent')
 var should = require('should')
 var app = require('../app')
@@ -17,16 +15,19 @@ before('Prepare db',function(done){
     })
 })
 var testName = "mytest";
+var testplans = [{"name" : "stone roses test", "testplanid" : 1},{"name":"oasis tests", "testplanid" : 4442}]
 var data = {"name":testName,
             "startDate":"12/11/2100",
             "endDate": "12/12/2100",
             "targetDate" : null,
-            "tc" : 1000}
+            "tc" : 1000,
+            "testplans" : testplans}
 var newdata = {"name":testName,
             "startDate":"12/11/2200",
             "endDate": "12/12/2200",
             "targetDate" :"12/12/2200",
-            "tc" : 100}
+            "tc" : 100,
+            "testplans" : testplans}
 
 var dataEntry = {
     date: '14/12//2015',
@@ -44,10 +45,10 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.post('http://localhost:3000/reporting/api/alfresco/5.1/testrun/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
-            assert(res.status === 200)
+            should.equal(res.status,200, 'status response')
             var json = res.body
             json.should.have.property('error')
-            assert(json.error === false)
+            should.equal(json.error,false)
             done()
         })
     })
@@ -56,10 +57,10 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.post('http://localhost:3000/reporting/api/alfresco/5.1/testrun/')
         .set("Content-Type","application/json")
         .send(baddata).end(function(err, res){
-            assert(res.status === 200)
+            should.equal(res.status,200)
             var json = res.body
             json.should.have.property('error')
-            assert(json.error === true)
+            should.equal(json.error, true, 'error message')
             done()
         })
     })
@@ -68,10 +69,10 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.post('http://localhost:3000/reporting/api/alfresco/5.1/testrun/')
         .set("Content-Type","application/json")
         .send(baddata).end(function(err, res){
-            assert(res.status === 200)
+            should.equal(res.status, 200, 'page response')
             var json = res.body
             json.should.have.property('error')
-            assert(json.error === true)
+            should.equal(json.error, true, 'display error message')
             done()
         })
     })
@@ -80,10 +81,10 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.post('http://localhost:3000/reporting/api/alfresco/5.1/testrun/')
         .set("Content-Type","application/json")
         .send(baddata).end(function(err, res){
-            assert(res.status === 200)
+            should.equal(res.status,200)
             var json = res.body
             json.should.have.property('error')
-            assert(json.error === true)
+            should.equal(json.error,true)
             done()
         })
     })
@@ -91,21 +92,21 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName).end(
             function(error,res){
                 var json = res.body
-                assert(res.status === 200)
+                should.equal(res.status, 200)
                 json.should.have.property('name')
-                assert(json.name === testName)
+                should.equal(json.name ,testName, 'test name')
                 json.should.have.property('startDate')
-                assert(json.startDate === '12/11/2100')
+                should.equal(json.startDate,'12/11/2100','start date')
                 json.should.have.property('endDate')
-                assert(json.endDate === '12/12/2100')
+                should.equal(json.endDate, '12/12/2100','end date')
                 json.should.have.property('tc')
-                assert(json.tc === 1000)
+                should.equal(json.tc, 1000, 'total test case count')
                 json.should.have.property('state')
-                assert(json.state === 'ready')
+                should.equal(json.state,'ready','state')
                 json.should.have.property('entries')
-                assert(json.entries.length === 0)
+                should.equal(json.entries.length, 0, 'enterise coubt')
                 json.should.have.property('testplans')
-                assert(json.testplans.length === 0)
+                should.equal(json.testplans.length, 2, 'testplan count')
                 json.should.not.have.property('targetDate')
                 done()
             })
@@ -114,10 +115,10 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.post('http://localhost:3000/reporting/api/alfresco/5.1/testrun/')
         .set("Content-Type","application/json")
         .send(data).end(function(err, res){
-            assert(res.status === 200)
+            should.equal(res.status, 200)
             var json = res.body
             json.should.have.property('error')
-            assert(json.error === true)
+            should.equal(json.error, true)
             done()
         })
     })
@@ -126,23 +127,25 @@ describe('The test run captures the data relating to test execution of a run, wh
         .set("Content-Type","application/json")
         .send(newdata).end(function(err, res){
             var json = res.body
-            assert(res.status === 200)
+            should.equal(res.status, 200)
             json.should.have.property('name')
             should.equal(json.name, testName ,"name value")
             json.should.have.property('startDate')
-            should.equal(json.startDate,'12/11/2200')
+            should.equal(json.startDate, '12/11/2200' ,"startDate")
             json.should.have.property('endDate')
-            assert(json.endDate === '12/12/2200')
+            should.equal(json.endDate, '12/12/2200' , "endDate")
             json.should.have.property('tc')
-            assert(json.tc === 100)
+            should.equal(json.tc, 100, "TestCase total count")
             json.should.have.property('state')
-            assert(json.state === 'ready')
+            should.equal(json.state,'ready','state')
             json.should.have.property('entries')
-            assert(json.entries.length === 0)
+            should.equal(json.entries.length,0,'entries count')
             json.should.have.property('testplans')
-            assert(json.testplans.length === 0)
+            should.equal(json.testplans.length,2,'testplan count')
+            should.equal(json.testplans[1].name,"oasis tests", 'test plan name')
+            should.equal(json.testplans[1].testplanid, 4442,'testplan id')
             json.should.have.property('targetDate')
-            assert(json.targetDate === '12/12/2200')
+            should.equal(json.targetDate, '12/12/2200', 'tartgetDate')
             done()
         })
     })
@@ -153,7 +156,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             .set("Content-Type","application/json")
             .send(newdata).end(function(err, res){
                 var json = res.body
-                assert(res.status === 200)
+                should.equal(res.status,200)
                 json.should.have.property('error')
                 should.equal(json.error,true)
                 done()
@@ -166,7 +169,7 @@ describe('The test run captures the data relating to test execution of a run, wh
                 should.equal(result.state, "ready")
                 superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName + '/start').end(function(err,res){
                     var json = res.body
-                    assert(res.status === 200)
+                    should.equal(res.status, 200)
                     should.equal(json.err,false)
                     testruns.findOne(q,function(err1,result1){
                         should.equal(result1.state, "running")
@@ -197,7 +200,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             should.equal(result.state, "running")
             superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName + '/stop').end(function(err,res){
                 var json = res.body
-                assert(res.status === 200)
+                should.equal(res.status, 200)
                 should.equal(json.err,false)
                 testruns.findOne(q,function(err1,result1){
                     should.equal(result1.state, "finished")
@@ -227,17 +230,17 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName + '/report').end(function(error, result){
             var json = result.body
             json.should.have.property('name')
-            assert(json.name === testName)
+            should.equal(json.name,testName ,'test name')
             json.should.have.property('startDate')
-            assert(json.startDate === '12/11/2200')
+            should.equal(json.startDate, '12/11/2200', 'start date')
             json.should.have.property('endDate')
-            assert(json.endDate === '12/12/2200')
+            should.equal(json.endDate, '12/12/2200','end date')
             json.should.have.property('tc')
-            assert(json.tc === 100)
+            should.equal(json.tc,100,'total test case count')
             json.should.have.property('entries')
-            assert(json.entries.length === 1)
+            should.equal(json.entries.length, 1, 'entries')
             json.should.have.property('testplans')
-            assert(json.testplans.length === 0)
+            should.equal(json.testplans.length, 2, 'test plan count')
             json.should.have.property('scurve')
             done()
         })
@@ -272,16 +275,16 @@ describe('The test run captures the data relating to test execution of a run, wh
         run.should.have.property('name')
         should.equal(run.name, testName ,"name value")
         run.should.have.property('startDate')
-        should.equal(run.startDate,'12/11/2200')
+        should.equal(run.startDate,'12/11/2200', 'start date')
         run.should.have.property('endDate')
-        assert(run.endDate === '12/12/2200')
+        should.equal(run.endDate, '12/12/2200', 'end date')
         run.should.have.property('tc')
-        assert(run.tc === 100)
+        should.equal(run.tc, 100, 'total tx')
         run.should.have.property('state')
-        assert(run.state === 'ready')
+        should.equal(run.state, 'ready', 'state')
         run.should.have.property('entries')
-        assert(run.entries.length === 0)
+        should.equal(run.entries.length, 0, 'entries count')
         run.should.have.property('targetDate')
-        assert(run.targetDate === '12/12/2200')
+        should.equal(run.targetDate, '12/12/2200','tartgetDate')
     }
 })

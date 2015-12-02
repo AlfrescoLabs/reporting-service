@@ -3,7 +3,7 @@ var scurve = require('../reports/scurve')
 var db = require('mongoskin').db(config.mongo)
 
 
-function getTestRunData(version,name, callback){
+function getTestRunData(version, name, callback){
     db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
         callback(result)
     })
@@ -92,6 +92,7 @@ module.exports ={
         if(tc == undefined || tc <=0 ){
             callback(new Error('Valid test case count is required'))
         }
+        var testplans = req.body.testplans
         var data =
             {"name":name,
             "startDate":startDate,
@@ -99,7 +100,7 @@ module.exports ={
             "tc" : tc,
             "state": "ready", // the 3 states: ready, running, finished
             "entries":[],
-            "testplans" : []
+            "testplans" : testplans
             }
             if(targetDate !== undefined && targetDate !== null){
                 data.targetDate = targetDate
