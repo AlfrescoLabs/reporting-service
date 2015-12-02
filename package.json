@@ -20,7 +20,8 @@
     "express": "^4.13.3",
     "mongodb": "^1.4.39",
     "mongoskin": "^1.4.13",
-    "request": "^2.64.0"
+    "request": "^2.64.0",
+    "testlink-connect": "^0.5.3"
   },
   "devDependencies": {
     "expect": "^1.10.0",
