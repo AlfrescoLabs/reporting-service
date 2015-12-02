@@ -8,5 +8,8 @@ var config = module.exports = {}
 config.hostname = 'localhost'
 // JIRA
 config.jira = {}
-config.jira.url = 'https://issues.alfresco.com'
-config.jira.authentication = "Basic bXN1enVraTpuQkd4aTU4NA=="
+config.jira.url = 'https://issuestest.alfresco.com'
+config.jira.authentication = ''
+config.testlink = {}
+config.testlink.url = ''
+config.testlink.key = ''

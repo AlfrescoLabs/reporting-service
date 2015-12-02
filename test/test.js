@@ -97,7 +97,7 @@ function verifyModel(json){
   var issues = json.issues
 
   if(json.issues.length > 0){
-    should.equal(json.critical+json.blocker, json.count)
+    should.equal(json.critical + json.blocker, json.count)
     json.issues[0].should.have.property('id')
     issues[0].should.have.property('link')
     issues[0].should.have.property('type')
