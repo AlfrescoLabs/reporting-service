@@ -1,5 +1,3 @@
-var assert = require('assert')
-var expect = require('expect')
 var superagent = require('superagent')
 var should = require('should')
 var app = require('../app')
@@ -13,14 +11,14 @@ before(function(done){
   async.parallel([
     function callApi(callback){
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created').end(function(err,res){
-        assert(res.status === 200)
+        should.equal(res.status, 200)
         callback()
       })
     }
     ,
     function callApi2nd(callback){
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created').end(function(err,res){
-        assert(res.status === 200)
+        should.equal(res.status,200)
         callback()
       })
     }],
@@ -46,12 +44,12 @@ describe('reporting/api/alfresco/5.1/defects/created/01/01/2015', function() {
       var parsedDate =  targetDate.getDate()+ "/" + (new Number(targetDate.getMonth()) + 1) + "/" + targetDate.getFullYear()
       //Call api to update backend twice, expect one entry as this as an upsert op.
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/01/01/2015').end(function(err,res){
-        assert(res.status === 200)
+        should.equal(res.status,200)
         should.equal('1/1/2015', res.body.dateDisplay)
         verifyDB(parsedDate)
       })
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/1/1/2015').end(function(err,res){
-        assert(res.status === 200)
+        should.equal(res.status,200)
         should.equal('1/1/2015', res.body.dateDisplay)
         verifyDB(parsedDate)
         done()
@@ -77,8 +75,7 @@ describe('reporting/api/alfresco/5.1/defects/created', function() {
   it('should only return open jira issues from mongo', function(done) {
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created').end(
       function(err, res) {
-        assert.ifError(err)
-        assert(res.status === 200)
+        should.equal(res.status,200)
         var response = res.body
         response.should.have.property('date')
         should.not.exist(response.close)
@@ -110,7 +107,7 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
     it('Should get data and store only one entery per day', function(done) {
       this.timeout(15000); // Setting a longer timeout
       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(function(err, res) {
-        assert(res.status === 200)
+        should.equal(res.status,200)
         var today = new Date()
         var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
         db.collection('5.1-report').find({
@@ -126,8 +123,7 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
    this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(
       function(err, res) {
-        assert.ifError(err)
-        assert(res.status === 200)
+        should.equal(res.status,200)
         var json = res.body
         json.should.have.property('date')
         should.not.exist(json.close)
@@ -143,7 +139,7 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
     this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end()
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(function(err, res) {
-      assert(res.status === 200)
+      should.equal(res.status,200)
       var today = new Date()
       var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
       db.collection('5.1-trend').find({

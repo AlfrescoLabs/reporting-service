@@ -1,7 +1,5 @@
-var assert = require('assert')
 var expect = require('expect')
 var superagent = require('superagent')
-var should = require('should')
 var scurve = require('../reports/scurve')
 
 
