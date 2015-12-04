@@ -15,7 +15,14 @@ before('Prepare db',function(done){
     })
 })
 var testName = "mytest";
-var testplans = [{"name" : "stone roses test", "testplanid" : 1},{"name":"oasis tests", "testplanid" : 4442}]
+//Ent5.1-VirtualFolders release 1.0
+//Ent5.1-ManualRegressionVFOn
+//Ent5.1-ManualRegressionVFOff
+//Ent5.1-UpgradesVFOn
+//Applause TestPlan includes SanityVFON  and DocLibrary from ManualRegression
+var testplans = [
+    {"name" : "stone roses test", "testplanid" : 1},
+    {"name":"oasis tests", "testplanid" : 4442}]
 var data = {"name":testName,
             "startDate":"12/11/2100",
             "endDate": "12/12/2100",
