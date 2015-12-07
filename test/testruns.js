@@ -20,9 +20,25 @@ var testName = "mytest";
 //Ent5.1-ManualRegressionVFOff
 //Ent5.1-UpgradesVFOn
 //Applause TestPlan includes SanityVFON  and DocLibrary from ManualRegression
+var report =[
+    {
+    'Date' : "12/12/2070",
+    'NotRun' : 7,
+    'Passed' : 200,
+    'Failed' : 8,
+    'Blocked' :4
+    },
+    {
+    'Date' : "13/12/2070",
+    'NotRun' : 0,
+    'Passed' : 207,
+    'Failed' : 8,
+    'Blocked' :4
+    },
+]
 var testplans = [
-    {"name" : "stone roses test", "testplanid" : 1},
-    {"name":"oasis tests", "testplanid" : 4442}]
+    {"name" : "stone roses test", "testplanid" : 1, "report":[]},
+    {"name":"oasis tests", "testplanid" : 4442, "report" : []}]
 var data = {"name":testName,
             "startDate":"12/11/2100",
             "endDate": "12/12/2100",

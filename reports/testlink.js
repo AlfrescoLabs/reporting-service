@@ -1,7 +1,9 @@
 var TestlinkConnect = require("testlink-connect");
+var moment = require('moment')
 var config = require('../config')
+var testlink = new TestlinkConnect(config.testlink.key, config.testlink.url)
 module.exports = {
-    getTestPlan:function(json, callback){
+    getTestPlanReport:function(json, callback){
         if(json == null){
             throw new Error('Project name is required')
         }
@@ -11,10 +13,9 @@ module.exports = {
         if(json.testplanid == null || json.testplanid.length === 0){
             throw new Error('Test plan id is required')
         }
-        var testlink = new TestlinkConnect(config.testlink.key, config.testlink.url)
-
         testlink.getTotalsForTestPlan(json, function(res){
             var result = {
+                'Date' : moment().format("DD-MM-YY"),
                 'NotRun' : res.struct._n.exec_qty,
                 'Passed' : res.struct._p.exec_qty,
                 'Failed' : res.struct._f.exec_qty,
@@ -29,15 +30,25 @@ module.exports = {
             'testprojectname' : json.project,
             'testplanname' : json.testplan
         };
-        var testlink = new TestlinkConnect(config.testlink.key, config.testlink.url)
         testlink.getTestPlanByName(obj,function(res){
             callback(res.struct.id)
         })
     },
     getProjectTestPlans: function(params, callback){
-        var testlink = new TestlinkConnect(config.testlink.key, config.testlink.url)
         testlink.getProjectTestPlans(params, function(res){
             callback(res)
         })
+    },
+    getProjectId : function(json, callback){
+        testlink.getTestProjectByName(json,function(res){
+            callback(res.struct.id)
+        })
+    },
+    getTestplan : function(json, callback){
+        testlink.getTestplan(json, function(response){
+            console.log(response)
+            callback(response)
+        })
     }
+
 }

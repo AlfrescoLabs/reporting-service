@@ -2,8 +2,10 @@ var assert = require('assert')
 var expect = require('expect')
 var should = require('should')
 var testlink = require('../reports/testlink')
-
+var moment = require('moment')
+var today = moment().format("DD-MM-YY")
 var data = {
+    'Date' : today,
     'NotRun' : 0,
     'Passed' : 207,
     'Failed' : 8,
@@ -16,19 +18,20 @@ it('Should get testplan id', function(done){
         done()
     })
 })
+
 it('Should throw an error if project name is not provided', function(done){
     var json = {"testplanid" : "boo"}
-    assert.throws(function(){testlink.getTestPlan(json)}, Error)
+    assert.throws(function(){testlink.getTestPlanReport(json)}, Error)
     done()
 })
 it('Should throw an error if testplan name is not provided', function(done){
     var json = { 'project':'AlfrescoOne', 'testplanid' : ''}
-    assert.throws(function(){testlink.getTestPlan(json)}, Error)
+    assert.throws(function(){testlink.getTestPlanReport(json)}, Error)
     done()
 })
 it('should display information relating to the test plan execution', function(done){
     var json = { 'project':'AlfrescoOne', 'testplanid' : '927183'}
-    testlink.getTestPlan(json,function(callback){
+    testlink.getTestPlanReport(json,function(callback){
         expect(data).toEqual(callback)
         done()
     })
@@ -36,9 +39,15 @@ it('should display information relating to the test plan execution', function(do
 it('should get a collection of test plans from project name', function(done){
     var json = { 'testprojectid':'460141'}
     testlink.getProjectTestPlans(json,function(response){
-        console.log(response[0])
         response[0].struct.should.have.property('name')
         response[0].struct.should.have.property('id')
+        done()
+    })
+})
+it('should get project id from project name', function(done){
+    var json = { 'testprojectname':'AlfrescoOne'}
+    testlink.getProjectId(json,function(response){
+        expect(response).toEqual("460141")
         done()
     })
 })
