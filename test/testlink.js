@@ -4,8 +4,8 @@ var should = require('should')
 var testlink = require('../reports/testlink')
 
 var data = {
-    'NotRun' : 11,
-    'Passed' : 196,
+    'NotRun' : 1,
+    'Passed' : 206,
     'Failed' : 8,
     'Blocked' :4
 }
@@ -20,7 +20,7 @@ it('Should throw an error if testplan name is not provided', function(done){
     done()
 })
 it('should display information relating to the test plan execution', function(done){
-    var json = { projectname:'AlfrescoOne',testplanname : 'Ent5.1-ManualRegressionVFOn'}
+    var json = { 'projectname':'AlfrescoOne', 'testplanid' : '927183'}
     testlink.getTestPlan(json,function(callback){
         expect(data).toEqual(callback)
         done()
