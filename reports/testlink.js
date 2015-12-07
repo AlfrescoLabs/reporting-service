@@ -5,7 +5,7 @@ module.exports = {
         if(json == null){
             throw new Error('Project name is required')
         }
-        if(json.projectname == null || json.projectname.length === 0){
+        if(json.project == null || json.project.length === 0){
             throw new Error('Project name is required')
         }
         if(json.testplanid == null || json.testplanid.length === 0){
@@ -24,14 +24,14 @@ module.exports = {
         });
 
     },
-    getTestPlanId : function(name, callback){
+    getTestPlanId : function(json, callback){
         var obj = {
-            'testprojectname':'AlfrescoOne',
-            'testplanname':name
+            'testprojectname' : json.project,
+            'testplanname' : json.testplan
         };
         var testlink = new TestlinkConnect(config.testlink.key, config.testlink.url)
         testlink.getTestPlanByName(obj,function(res){
-            callback(res)
+            callback(res.struct.id)
         })
     }
 }
