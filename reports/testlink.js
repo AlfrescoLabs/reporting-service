@@ -33,5 +33,11 @@ module.exports = {
         testlink.getTestPlanByName(obj,function(res){
             callback(res.struct.id)
         })
+    },
+    getProjectTestPlans: function(params, callback){
+        var testlink = new TestlinkConnect(config.testlink.key, config.testlink.url)
+        testlink.getProjectTestPlans(params, function(res){
+            callback(res)
+        })
     }
 }

@@ -4,8 +4,8 @@ var should = require('should')
 var testlink = require('../reports/testlink')
 
 var data = {
-    'NotRun' : 1,
-    'Passed' : 206,
+    'NotRun' : 0,
+    'Passed' : 207,
     'Failed' : 8,
     'Blocked' :4
 }
@@ -30,6 +30,15 @@ it('should display information relating to the test plan execution', function(do
     var json = { 'project':'AlfrescoOne', 'testplanid' : '927183'}
     testlink.getTestPlan(json,function(callback){
         expect(data).toEqual(callback)
+        done()
+    })
+})
+it('should get a collection of test plans from project name', function(done){
+    var json = { 'testprojectid':'460141'}
+    testlink.getProjectTestPlans(json,function(response){
+        console.log(response[0])
+        response[0].struct.should.have.property('name')
+        response[0].struct.should.have.property('id')
         done()
     })
 })
