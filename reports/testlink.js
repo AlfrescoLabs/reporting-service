@@ -44,11 +44,4 @@ module.exports = {
             callback(res.struct.id)
         })
     },
-    getTestplan : function(json, callback){
-        testlink.getTestplan(json, function(response){
-            console.log(response)
-            callback(response)
-        })
-    }
-
 }
