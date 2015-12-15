@@ -1,7 +1,7 @@
 var config = require('../config')
 var scurve = require('../reports/scurve')
 var db = require('mongoskin').db(config.mongo)
-
+var testlink = require('./testlink')
 
 function getTestRunData(version, name, callback){
     db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
@@ -9,25 +9,23 @@ function getTestRunData(version, name, callback){
     })
 }
 module.exports ={
-    create : function(req,res){
+    create : function(req, res){
         var version = req.params.version
         var testruns = db.collection(version + '-testruns').ensureIndex({name:1}, {unique:true},function(err,res){})
-        var data = module.exports.parseTestRun(req,function(err,result){
+        module.exports.parseTestRun(req,function(err,parsedData){
             if(err){
-                res.send({error:true, msg : err})
-                return
+                return res.send({error:true, msg : err})
             }
-        })
-        testruns.save(
-            data,{},function(error,result){
-                if(error){
-                    res.send({error:true, msg : error.message})
-                    return
-                }
-                res.send({error:false});
+            testruns.save(parsedData, {}, function(error,result){
+                    if(error){
+                        res.send({error:true, msg : error.message})
+                        return
+                    }
+                    res.send({error:false});
             })
+        })
     },
-    get:function(req,res){
+    get:function(req, res){
         var name = req.params.name
         var version = req.params.version
         getTestRunData(version, name,function(result){
@@ -43,22 +41,23 @@ module.exports ={
         })
     },
     update: function(req,res){
-        var data = module.exports.parseTestRun(req,function(err){
+        module.exports.parseTestRun(req,function(err,data){
             if(err){
                 res.send({error:true, msg : err})
                 return
             }
+            var version = req.params.version
+            db.collection(version + '-testruns').update(
+                { "name" : data.name, "state" : "ready" },
+                data,
+                { upsert: true }, function(err, result){
+                if(err){
+                    res.send({error:true,msg:err.err})
+                    return
+                }
+                res.send(data)
         })
-        var version = req.params.version
-        db.collection(version + '-testruns').update(
-            { "name" : data.name, "state" : "ready" },
-            data,
-            { upsert: true }, function(err, result){
-            if(err){
-                res.send({error:true,msg:err.err})
-                return
-            }
-            res.send(data)
+
         })
     },
     addEntry : function(req, res){
@@ -76,21 +75,23 @@ module.exports ={
             res.send({err:false})
         })
     },
-
-    parseTestRun: function(req,callback){
+    parseTestRun: function(req, callback){
         var name = req.body.name
         var startDate = req.body.startDate
         if(startDate == undefined){
             callback(new Error("Start date is required"))
+            return
         }
         var endDate = req.body.endDate
         if(endDate == undefined){
             callback(new Error("End date is required"))
+            return
         }
         var targetDate = req.body.targetDate
         var tc = req.body.tc
-        if(tc == undefined || tc <=0 ){
+        if(tc == undefined || tc <= 0 ){
             callback(new Error('Valid test case count is required'))
+            return
         }
         var testplans = req.body.testplans
         var data =
@@ -105,8 +106,12 @@ module.exports ={
             if(targetDate !== undefined && targetDate !== null){
                 data.targetDate = targetDate
             }
-        return data
+        callback(null, data)
     },
+    /**
+     * Sets a flag to indicate the run has started, once started the run cant
+     * be edited.
+     */
     start: function(req, res){
         var version = req.params.version
         var name = req.params.name
@@ -140,6 +145,19 @@ module.exports ={
             result.scurve = scurve.getScurve(result.startDate, result.endDate, result.tc)
             res.send(result)
         })
+    },
+    // Function which collects all results of test execution and summarizes into an entry.
+    generateEntry : function(project, testplans, callback){
+
+        testplans.forEach(function(testplan){
+            var json = { 'project':project, 'testplanid' : testplan.testplanid}
+            testlink.getTestPlanReport(json,function(result){
+                console.log("HERE WE ARE")
+                consloe.log(result)
+                callback()
+            })
+        })
+        console.log("Calling back")
 
     }
 }

@@ -5,11 +5,11 @@ var testlink = require('../reports/testlink')
 var moment = require('moment')
 var today = moment().format("DD-MM-YY")
 var data = {
+    'NotRun' : "0",
     'Date' : today,
-    'NotRun' : 0,
-    'Passed' : 207,
-    'Failed' : 8,
-    'Blocked' :4
+    'Passed' : "207",
+    'Failed' : "8",
+    'Blocked' : "4"
 }
 it('Should get testplan id', function(done){
     var json = {'project':'AlfrescoOne','testplan' : 'Ent5.1-ManualRegressionVFOn'}
@@ -51,3 +51,20 @@ it('should get project id from project name', function(done){
         done()
     })
 })
+// it('Should get testplan id', function(done){
+//     var json = {'project':'AlfrescoOne','testplan' : ''}
+//     var testplans =[
+//     "Ent5.1-AutomationRegressionVFOff",
+//     "Ent5.1-AutomationRegressionVFOn",
+//     // "Ent5.1-ManualRegressionVFOff",
+//     // "Ent5.1-UpgradesVFOn"
+//     ]
+//     testplans.forEach(function(testplan){
+//         json.testplan = testplan
+//
+//         testlink.getTestPlanId(json, function(result){
+//             console.log('{ "name":' + testplan + " , testplanid : " + result + '},')
+//         })
+//     })
+//     done()
+// })

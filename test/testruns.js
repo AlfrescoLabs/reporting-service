@@ -3,6 +3,7 @@ var should = require('should')
 var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo, {safe:true})
+var testrunsAPI = require('../reports/testruns')
 //Test run collection
 var testruns
 before('Prepare db',function(done){
@@ -15,30 +16,10 @@ before('Prepare db',function(done){
     })
 })
 var testName = "mytest";
-//Ent5.1-VirtualFolders release 1.0
-//Ent5.1-ManualRegressionVFOn
-//Ent5.1-ManualRegressionVFOff
-//Ent5.1-UpgradesVFOn
-//Applause TestPlan includes SanityVFON  and DocLibrary from ManualRegression
-var report =[
-    {
-    'Date' : "12/12/2070",
-    'NotRun' : 7,
-    'Passed' : 200,
-    'Failed' : 8,
-    'Blocked' :4
-    },
-    {
-    'Date' : "13/12/2070",
-    'NotRun' : 0,
-    'Passed' : 207,
-    'Failed' : 8,
-    'Blocked' :4
-    },
-]
+
 var testplans = [
-    {"name" : "stone roses test", "testplanid" : 1, "report":[]},
-    {"name":"oasis tests", "testplanid" : 4442, "report" : []}]
+    {"name" : "stone roses test", "testplanid" : 1},
+    {"name":"oasis tests", "testplanid" : 4442}]
 var data = {"name":testName,
             "startDate":"12/11/2100",
             "endDate": "12/12/2100",
@@ -202,7 +183,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
-    it('should be able to update entries with a new entry', function(done){
+    it('should update entries with a new entry', function(done){
         testruns.findOne(q,function(error,result){
             should.equal(result.entries.length,0)
             superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName)
@@ -279,6 +260,16 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
+    // it('Should create an entry from the list of testplans',function(done){
+    //
+    //     var testplans =[
+    //         { "name":"Ent5.1-AutomationRegressionVFOff" , "testplanid" : 927539},
+    //         { "name":"Ent5.1-AutomationRegressionVFOn" , "testplanid" : 927437}]
+    //     //Applause TestPlan includes SanityVFON  and DocLibrary from ManualRegression
+    //     testrunsAPI.generateEntry("AlfrescoOne", testplans, function(result){
+    //         should.exist(result)
+    //     })
+    // })
     function validateDateEntry(entry){
         entry.should.have.property('date')
         entry.should.have.property('defectTarget')
