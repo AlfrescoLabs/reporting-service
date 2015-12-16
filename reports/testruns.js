@@ -2,7 +2,8 @@ var config = require('../config')
 var scurve = require('../reports/scurve')
 var db = require('mongoskin').db(config.mongo)
 var testlink = require('./testlink')
-
+var moment = require('moment')
+var async = require('async')
 function getTestRunData(version, name, callback){
     db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
         callback(result)
@@ -66,7 +67,7 @@ module.exports ={
         var data = req.body
         db.collection(version + '-testruns').update(
             { "name": name , "state" : "running" },
-            {$addToSet:{"entries":data}},
+            {$addToSet:{"entries" : data}},
             {upsert: true},function(err ,result){
             if(err){
                 res.send({err:true,msg : err.err})
@@ -148,16 +149,29 @@ module.exports ={
     },
     // Function which collects all results of test execution and summarizes into an entry.
     generateEntry : function(project, testplans, callback){
-
-        testplans.forEach(function(testplan){
-            var json = { 'project':project, 'testplanid' : testplan.testplanid}
-            testlink.getTestPlanReport(json,function(result){
-                console.log("HERE WE ARE")
-                consloe.log(result)
-                callback()
-            })
+        var data = {
+            date: moment().format("DD-MM-YY"),
+            defectTarget: 0,
+            defectActual: 0,
+            testRemaining: 0,
+            testExecuted: 0,
+            failedTest: 0
+        }
+        async.each(testplans,
+            function(testplan, done){
+                var json = { 'project':project, 'testplanid' : testplan.testplanid}
+                testlink.getTestPlanReport(json,function(result){
+                    //Add new values to entry to make a summary
+                    data.testExecuted = data.testExecuted + Number(result.Passed)
+                    data.failedTest = data.failedTest + Number(result.Failed)
+                    console.log("Finished")
+                    done()
+                })
+        },
+        function(err){
+            console.log("Let wrap it up")
+            console.log(data)
+            callback(data)
         })
-        console.log("Calling back")
-
     }
 }

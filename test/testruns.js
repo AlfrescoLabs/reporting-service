@@ -4,6 +4,7 @@ var app = require('../app')
 var config = require('../config')
 var db = require('mongoskin').db(config.mongo, {safe:true})
 var testrunsAPI = require('../reports/testruns')
+var moment = require('moment')
 //Test run collection
 var testruns
 before('Prepare db',function(done){
@@ -34,7 +35,7 @@ var newdata = {"name":testName,
             "testplans" : testplans}
 
 var dataEntry = {
-    date: '14/12//2015',
+    date: '14/12/2015',
     defectTarget:10,
     defectActual:20,
     testRemaining:4000,
@@ -260,31 +261,39 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
-    // it('Should create an entry from the list of testplans',function(done){
-    //
-    //     var testplans =[
-    //         { "name":"Ent5.1-AutomationRegressionVFOff" , "testplanid" : 927539},
-    //         { "name":"Ent5.1-AutomationRegressionVFOn" , "testplanid" : 927437}]
-    //     //Applause TestPlan includes SanityVFON  and DocLibrary from ManualRegression
-    //     testrunsAPI.generateEntry("AlfrescoOne", testplans, function(result){
-    //         should.exist(result)
-    //     })
-    // })
-    function validateDateEntry(entry){
+    it('Should create an entry from the list of testplans',function(done){
+        var testplans =[
+            { "name":"Ent5.1-AutomationRegressionVFOff" , "testplanid" : 927539},
+            { "name":"Ent5.1-AutomationRegressionVFOn" , "testplanid" : 927437}]
+        testrunsAPI.generateEntry("AlfrescoOne", testplans, function(result){
+            should.exist(result)
+            validateLabels(result)
+            should.equal(result.date, moment().format("DD-MM-YY"), "date value")
+            should.equal(result.testExecuted, 4289 ,"testExecuted value")
+            should.equal(result.failedTest, 19 ,"failedTest value")
+            done()
+        })
+    })
+
+    function validateLabels(entry){
         entry.should.have.property('date')
         entry.should.have.property('defectTarget')
         entry.should.have.property('defectActual')
         entry.should.have.property('testRemaining')
         entry.should.have.property('testExecuted')
         entry.should.have.property('failedTest')
+    }
 
-        should.equal(entry.date, '14/12//2015' ,"date value")
+    function validateDateEntry(entry){
+        validateLabels(entry)
+        should.equal(entry.date, '14/12/2015' ,"date value")
         should.equal(entry.defectTarget, 10 ,"defectTarget")
         should.equal(entry.defectActual, 20 ,"defectActual")
         should.equal(entry.testRemaining, 4000 ,"testRemainingvalue")
         should.equal(entry.testExecuted, 100 ,"testExecuted value")
         should.equal(entry.failedTest, 40 ,"failedTest value")
     }
+
     function validateTestRun(run){
         run.should.have.property('name')
         should.equal(run.name, testName ,"name value")

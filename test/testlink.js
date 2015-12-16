@@ -51,20 +51,3 @@ it('should get project id from project name', function(done){
         done()
     })
 })
-// it('Should get testplan id', function(done){
-//     var json = {'project':'AlfrescoOne','testplan' : ''}
-//     var testplans =[
-//     "Ent5.1-AutomationRegressionVFOff",
-//     "Ent5.1-AutomationRegressionVFOn",
-//     // "Ent5.1-ManualRegressionVFOff",
-//     // "Ent5.1-UpgradesVFOn"
-//     ]
-//     testplans.forEach(function(testplan){
-//         json.testplan = testplan
-//
-//         testlink.getTestPlanId(json, function(result){
-//             console.log('{ "name":' + testplan + " , testplanid : " + result + '},')
-//         })
-//     })
-//     done()
-// })
