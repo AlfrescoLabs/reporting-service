@@ -31,7 +31,8 @@ describe('reporting/api/alfresco/5.1/defects/created', function() {
       var today = new Date()
       var parsedDate =  today.getDate()+ "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
       db.collection('5.1-report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
-        should(1).be.equal(result.length)
+        console.log(result)
+        should.equal(1, result.length)
         verifyModel(result[0].open)
         done();
       });
