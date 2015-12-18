@@ -136,6 +136,7 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
         'dateDisplay': parsedDate
       }).toArray(function(err, result) {
         should.equal(1, result.length)
+        console.log(result[0].open)
         verifyModel(result[0].open)
         done()
       });
