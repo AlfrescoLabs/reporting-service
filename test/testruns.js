@@ -233,14 +233,15 @@ describe('The test run captures the data relating to test execution of a run, wh
             done()
         })
     })
-    // it('Should update test run with an entry generated from the list of testplans',function(done){
-    //     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
-    //     .end(function(err,res){
-    //         // should.equal(200, res.status)
-    //         // should.equal("Test run is not active", res.body.msg)
-    //         done()
-    //     })
-    // })
+    it('Should update test run with an entry generated from the list of testplans',function(done){
+        superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
+        .end(function(err,res){
+            should.equal(200, res.status)
+            console.log(res.body)
+            should.equal(false,res.body.err)
+            done()
+        })
+    })
 
     it('should update state of a test run to finished',function(done){
         testruns.findOne(q,function(err,result){
@@ -277,12 +278,12 @@ describe('The test run captures the data relating to test execution of a run, wh
             dataEntry.date = "21/12/2015"
             dataEntry.tc = "1000"
             should.equal(result.state, "finished")
-            should.equal(result.entries.length, 1)
+            should.equal(result.entries.length, 2)
             superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName)
                 .set("Content-Type","application/json")
                 .send(dataEntry).end(function(err,res){
                     testruns.findOne(q,function(e,dbres){
-                        should.equal(dbres.entries.length,1)
+                        should.equal(dbres.entries.length,2)
                         validateDateEntry(dbres.entries[0])
                         done()
                     })

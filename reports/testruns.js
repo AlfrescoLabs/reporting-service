@@ -101,10 +101,18 @@ module.exports ={
             if(result.state === 'finished'){
                 return res.send({err:true, msg : "Test run is not active"})
             }
-            module.exports.generateEntry(result.project, result.testplans, function(err, callback){
+            module.exports.generateEntry(result.project, result.testplans, function(err, data){
                 if(err){
                     return res.send({err:true, msg: err})
                 }
+                module.exports.saveEntry(name,version,data, function(err, callback){
+                    if(err){
+                        return res.send({err:true, msg : err.err})
+                    }
+                    if(callback){
+                        res.send({err:false})
+                    }
+                })
             })
         })
     },
