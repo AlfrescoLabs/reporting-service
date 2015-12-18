@@ -123,7 +123,6 @@ function verifyModel(json){
         'dateDisplay': parsedDate
       }).toArray(function(err, result) {
         should.equal(1, result.length)
-        console.log(result[0].open)
         verifyModel(result[0].open)
         done()
       })
