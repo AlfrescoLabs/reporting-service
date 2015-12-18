@@ -135,6 +135,8 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
       db.collection('5.1-trend').find({
         'dateDisplay': parsedDate
       }).toArray(function(err, result) {
+        console.log("========")
+        console.log(result)
         should(1).be.equal(result.length)
         verifyModel(result[0].open)
         done()
