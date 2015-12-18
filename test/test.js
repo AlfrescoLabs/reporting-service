@@ -85,30 +85,16 @@ function verifyModel(json){
 
   if(json.issues.length > 0){
     should.equal(json.critical + json.blocker, json.count)
-    json.issues[0].should.have.property('id')
-    json.issues[0].should.have.property('link')
-    json.issues[0].should.have.property('type')
+    issues[0].should.have.property('id')
+    issues[0].should.have.property('link')
+    issues[0].should.have.property('type')
   } else {
     should.equal(0, json.count)
   }
 }
-//////////////////// Defect Trend test
-describe('reporting/api/alfresco/5.1/defects/open',function(done){
-    it('Should get data and store only one entery per day', function(done) {
-      this.timeout(15000); // Setting a longer timeout
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(function(err, res) {
-        should.equal(res.status,200)
-        var today = new Date()
-        var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
-        db.collection('5.1-report').find({
-          'dateDisplay': parsedDate
-        }).toArray(function(err, result) {
-          should(1).be.equal(result.length)
-          verifyModel(result[0].open)
-          done()
-      });
-    });
-  })
+
+
+
   it('should display results from db',function(done){
    this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end(
@@ -125,6 +111,7 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
         done()
       });
   })
+
   it('Should get data and store only one entery per day', function(done) {
     this.timeout(15000); // Setting a longer timeout
     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/open').end()
