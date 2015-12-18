@@ -86,8 +86,8 @@ function verifyModel(json){
   if(json.issues.length > 0){
     should.equal(json.critical + json.blocker, json.count)
     json.issues[0].should.have.property('id')
-    issues[0].should.have.property('link')
-    issues[0].should.have.property('type')
+    json.issues[0].should.have.property('link')
+    json.issues[0].should.have.property('type')
   } else {
     should.equal(0, json.count)
   }
@@ -135,9 +135,6 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
       db.collection('5.1-trend').find({
         'dateDisplay': parsedDate
       }).toArray(function(err, result) {
-        console.log("========")
-        console.log(result)
-        console.log(result.length)
         should.equal(1, result.length)
         verifyModel(result[0].open)
         done()
