@@ -126,8 +126,8 @@ function verifyModel(json){
         console.log(result[0].open)
         verifyModel(result[0].open)
         done()
-      });
-    });
+      })
+
   })
 
 })
