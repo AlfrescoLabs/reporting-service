@@ -21,7 +21,7 @@ module.exports = {
                 'Failed' : res.struct._f.exec_qty,
                 'Blocked' :res.struct._b.exec_qty
             }
-            callback(result)
+            callback(null,result)
         });
     },
     getTestPlanId : function(json, callback){

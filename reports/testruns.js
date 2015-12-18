@@ -4,6 +4,7 @@ var db = require('mongoskin').db(config.mongo)
 var testlink = require('./testlink')
 var moment = require('moment')
 var async = require('async')
+
 function getTestRunData(version, name, callback){
     db.collection(version + '-testruns').findOne({"name":name}, function(err,result){
         callback(result)
@@ -61,21 +62,51 @@ module.exports ={
 
         })
     },
+    //Add test run entry manually.
     addEntry : function(req, res){
         var name = req.params.name
         var version = req.params.version
         var data = req.body
+        module.exports.saveEntry(name, version, data, function(err, callback){
+            if(err){
+                return res.send({err:true, msg : err.err})
+            }
+            if(callback){
+                res.send({err:false})
+            }
+        })
+    },
+    //Function that save entry to mongo
+    saveEntry : function(name, version, data, callback){
         db.collection(version + '-testruns').update(
             { "name": name , "state" : "running" },
             {$addToSet:{"entries" : data}},
             {upsert: true},function(err ,result){
             if(err){
-                res.send({err:true,msg : err.err})
-                return
+                callback(err)
             }
-            res.send({err:false})
+            callback(null, result)
         })
     },
+
+    //Update entry via testlink
+    updateEntry : function(req , res){
+        var name = req.params.name
+        var version = req.params.version
+        getTestRunData(version, name, function(result){
+            if(result == undefined){
+                return res.send('{err:true, msg : "Unable to find record"}')
+            }
+            module.exports.generateEntry(result.project, result.testplans, function(err, callback){
+                if(err){
+                    return res.send({err:true, msg: err})
+                }
+                console.log("Look How Far We Have Come " + callback)
+                res.send("done")
+            })
+        })
+    },
+
     parseTestRun: function(req, callback){
         var name = req.body.name
         var startDate = req.body.startDate
@@ -86,6 +117,11 @@ module.exports ={
         var endDate = req.body.endDate
         if(endDate == undefined){
             callback(new Error("End date is required"))
+            return
+        }
+        var project = req.body.project
+        if(project == undefined){
+            callback(new Error("project name is required"))
             return
         }
         var targetDate = req.body.targetDate
@@ -102,6 +138,7 @@ module.exports ={
             "tc" : tc,
             "state": "ready", // the 3 states: ready, running, finished
             "entries":[],
+            "project" : project,
             "testplans" : testplans
             }
             if(targetDate !== undefined && targetDate !== null){
@@ -138,7 +175,7 @@ module.exports ={
             res.send({err:false})
         })
     },
-    getBurnDownReport:function(req,res){
+    getBurnDownReport : function(req,res){
         getTestRunData(req.params.version, req.params.name,function(result){
             if(result == undefined){
                 return res.end()
@@ -160,18 +197,18 @@ module.exports ={
         async.each(testplans,
             function(testplan, done){
                 var json = { 'project':project, 'testplanid' : testplan.testplanid}
-                testlink.getTestPlanReport(json,function(result){
+                testlink.getTestPlanReport(json,function(err, result){
+                    if(err){
+                        return done(err)
+                    }
                     //Add new values to entry to make a summary
                     data.testExecuted = data.testExecuted + Number(result.Passed)
                     data.failedTest = data.failedTest + Number(result.Failed)
-                    console.log("Finished")
                     done()
                 })
         },
         function(err){
-            console.log("Let wrap it up")
-            console.log(data)
-            callback(data)
+            callback(null, data)
         })
     }
 }

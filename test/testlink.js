@@ -31,7 +31,7 @@ it('Should throw an error if testplan name is not provided', function(done){
 })
 it('should display information relating to the test plan execution', function(done){
     var json = { 'project':'AlfrescoOne', 'testplanid' : '927183'}
-    testlink.getTestPlanReport(json,function(callback){
+    testlink.getTestPlanReport(json,function(err,callback){
         expect(data).toEqual(callback)
         done()
     })

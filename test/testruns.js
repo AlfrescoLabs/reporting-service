@@ -19,19 +19,21 @@ before('Prepare db',function(done){
 var testName = "mytest";
 
 var testplans = [
-    {"name" : "stone roses test", "testplanid" : 1},
-    {"name":"oasis tests", "testplanid" : 4442}]
+    { "name":"Ent5.1-AutomationRegressionVFOff" , "testplanid" : 927539},
+    { "name":"Ent5.1-AutomationRegressionVFOn" , "testplanid" : 927437}]
 var data = {"name":testName,
             "startDate":"12/11/2100",
             "endDate": "12/12/2100",
             "targetDate" : null,
             "tc" : 1000,
+            "project" : "AlfrescoOne",
             "testplans" : testplans}
 var newdata = {"name":testName,
             "startDate":"12/11/2200",
             "endDate": "12/12/2200",
             "targetDate" :"12/12/2200",
             "tc" : 100,
+            "project" : "AlfrescoOne",
             "testplans" : testplans}
 
 var dataEntry = {
@@ -147,8 +149,8 @@ describe('The test run captures the data relating to test execution of a run, wh
             should.equal(json.entries.length,0,'entries count')
             json.should.have.property('testplans')
             should.equal(json.testplans.length,2,'testplan count')
-            should.equal(json.testplans[1].name,"oasis tests", 'test plan name')
-            should.equal(json.testplans[1].testplanid, 4442,'testplan id')
+            should.equal(json.testplans[1].name, "Ent5.1-AutomationRegressionVFOn", 'test plan name')
+            should.equal(json.testplans[1].testplanid, 927437,'testplan id')
             json.should.have.property('targetDate')
             should.equal(json.targetDate, '12/12/2200', 'tartgetDate')
             done()
@@ -184,7 +186,7 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
-    it('should update entries with a new entry', function(done){
+    it('should add a new entry', function(done){
         testruns.findOne(q,function(error,result){
             should.equal(result.entries.length,0)
             superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName)
@@ -250,6 +252,28 @@ describe('The test run captures the data relating to test execution of a run, wh
             done()
         })
     })
+
+    it('Should create an entry from the list of testplans',function(done){
+        testrunsAPI.generateEntry(data.project, data.testplans, function(err,result){
+            should.exist(result)
+            validateLabels(result)
+            should.equal(result.date, moment().format("DD-MM-YY"), "date value")
+            should.equal(result.testExecuted, 4289 ,"testExecuted value")
+            should.equal(result.failedTest, 19 ,"failedTest value")
+            done()
+        })
+    })
+    // it('should not allow update of entries if test run has finished',function(done){
+    //     var data = {}
+    //     superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
+    //     .set("Content-Type","application/json")
+    //     .send(data)
+    //     .end(function(err,res){
+    //         console.log("!!!!!!!!!!!!!" + res.status)
+    //         should.equal(200, res.status)
+    //         done()
+    //     })
+    // })
     it('Should delete a test run',function(done){
         testruns.find(q, function(err,result){
             should.exist(result)
@@ -261,20 +285,6 @@ describe('The test run captures the data relating to test execution of a run, wh
             })
         })
     })
-    it('Should create an entry from the list of testplans',function(done){
-        var testplans =[
-            { "name":"Ent5.1-AutomationRegressionVFOff" , "testplanid" : 927539},
-            { "name":"Ent5.1-AutomationRegressionVFOn" , "testplanid" : 927437}]
-        testrunsAPI.generateEntry("AlfrescoOne", testplans, function(result){
-            should.exist(result)
-            validateLabels(result)
-            should.equal(result.date, moment().format("DD-MM-YY"), "date value")
-            should.equal(result.testExecuted, 4289 ,"testExecuted value")
-            should.equal(result.failedTest, 19 ,"failedTest value")
-            done()
-        })
-    })
-
     function validateLabels(entry){
         entry.should.have.property('date')
         entry.should.have.property('defectTarget')
@@ -309,5 +319,7 @@ describe('The test run captures the data relating to test execution of a run, wh
         should.equal(run.entries.length, 0, 'entries count')
         run.should.have.property('targetDate')
         should.equal(run.targetDate, '12/12/2200','tartgetDate')
+        run.should.have.property("project")
+        should.equal(run.project, "AlfrescoOne")
     }
 })
