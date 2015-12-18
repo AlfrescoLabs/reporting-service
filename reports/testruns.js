@@ -93,16 +93,18 @@ module.exports ={
     updateEntry : function(req , res){
         var name = req.params.name
         var version = req.params.version
+
         getTestRunData(version, name, function(result){
             if(result == undefined){
-                return res.send('{err:true, msg : "Unable to find record"}')
+                return res.send({err:true, msg : "Unable to find record"})
+            }
+            if(result.state === 'finished'){
+                return res.send({err:true, msg : "Test run is not active"})
             }
             module.exports.generateEntry(result.project, result.testplans, function(err, callback){
                 if(err){
                     return res.send({err:true, msg: err})
                 }
-                console.log("Look How Far We Have Come " + callback)
-                res.send("done")
             })
         })
     },

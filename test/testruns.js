@@ -263,17 +263,22 @@ describe('The test run captures the data relating to test execution of a run, wh
             done()
         })
     })
-    // it('should not allow update of entries if test run has finished',function(done){
-    //     var data = {}
-    //     superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
-    //     .set("Content-Type","application/json")
-    //     .send(data)
-    //     .end(function(err,res){
-    //         console.log("!!!!!!!!!!!!!" + res.status)
-    //         should.equal(200, res.status)
-    //         done()
-    //     })
-    // })
+    it('should not allow update of entries if test run has finished',function(done){
+        var data = {}
+        superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/stop').end(
+            function(err,res){
+                if(err){
+                    console.log(err)
+                }
+                superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
+                .end(function(err,res){
+                    should.equal(200, res.status)
+                    should.equal("Test run is not active", res.body.msg)
+                    done()
+                })
+            }
+        )
+    })
     it('Should delete a test run',function(done){
         testruns.find(q, function(err,result){
             should.exist(result)
