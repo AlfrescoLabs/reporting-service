@@ -137,7 +137,8 @@ describe('reporting/api/alfresco/5.1/defects/open',function(done){
       }).toArray(function(err, result) {
         console.log("========")
         console.log(result)
-        should(1).be.equal(result.length)
+        console.log(result.length)
+        should.equal(1, result.length)
         verifyModel(result[0].open)
         done()
       });
