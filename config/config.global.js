@@ -11,5 +11,5 @@ config.jira = {}
 config.jira.url = 'https://issuestest.alfresco.com'
 config.jira.authentication = ''
 config.testlink = {}
-config.testlink.url = ''
-config.testlink.key = ''
+config.testlink.url = process.env.TESTLINK_URL
+config.testlink.key = process.env.TESTLINK_KEY
