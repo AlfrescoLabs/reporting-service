@@ -202,37 +202,7 @@ describe('The test run captures the data relating to test execution of a run, wh
         })
     })
 
-    it('should update state test run to finished',function(done){
-        testruns.findOne(q,function(err,result){
-            should.equal(result.state, "running")
-            superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName + '/stop').end(function(err,res){
-                var json = res.body
-                should.equal(res.status, 200)
-                should.equal(json.err,false)
-                testruns.findOne(q,function(err1,result1){
-                    should.equal(result1.state, "finished")
-                    done()
-                })
-            })
-        })
-    })
-    it('should not ba able to add entry to test run when state is finished',function(done){
-        testruns.findOne(q,function(err,result){
-            dataEntry.date = "21/12/2015"
-            dataEntry.tc = "1000"
-            should.equal(result.state, "finished")
-            should.equal(result.entries.length, 1)
-            superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName)
-                .set("Content-Type","application/json")
-                .send(dataEntry).end(function(err,res){
-                    testruns.findOne(q,function(e,dbres){
-                        should.equal(dbres.entries.length,1)
-                        validateDateEntry(dbres.entries[0])
-                        done()
-                    })
-            })
-        })
-    })
+
     it('Should get burn down report',function(done){
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName + '/report').end(function(error, result){
             var json = result.body
@@ -263,6 +233,29 @@ describe('The test run captures the data relating to test execution of a run, wh
             done()
         })
     })
+    // it('Should update test run with an entry generated from the list of testplans',function(done){
+    //     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
+    //     .end(function(err,res){
+    //         // should.equal(200, res.status)
+    //         // should.equal("Test run is not active", res.body.msg)
+    //         done()
+    //     })
+    // })
+
+    it('should update state of a test run to finished',function(done){
+        testruns.findOne(q,function(err,result){
+            should.equal(result.state, "running")
+            superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName + '/stop').end(function(err,res){
+                var json = res.body
+                should.equal(res.status, 200)
+                should.equal(json.err,false)
+                testruns.findOne(q,function(err1, result1){
+                    should.equal(result1.state, "finished")
+                    done()
+                })
+            })
+        })
+    })
     it('should not allow update of entries if test run has finished',function(done){
         var data = {}
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/stop').end(
@@ -278,6 +271,23 @@ describe('The test run captures the data relating to test execution of a run, wh
                 })
             }
         )
+    })
+    it('should not ba able to add entry to test run when state is finished',function(done){
+        testruns.findOne(q,function(err,result){
+            dataEntry.date = "21/12/2015"
+            dataEntry.tc = "1000"
+            should.equal(result.state, "finished")
+            should.equal(result.entries.length, 1)
+            superagent.put('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName)
+                .set("Content-Type","application/json")
+                .send(dataEntry).end(function(err,res){
+                    testruns.findOne(q,function(e,dbres){
+                        should.equal(dbres.entries.length,1)
+                        validateDateEntry(dbres.entries[0])
+                        done()
+                    })
+            })
+        })
     })
     it('Should delete a test run',function(done){
         testruns.find(q, function(err,result){
