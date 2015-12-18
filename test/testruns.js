@@ -237,9 +237,21 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
         .end(function(err,res){
             should.equal(200, res.status)
-            console.log(res.body)
             should.equal(false,res.body.err)
-            done()
+            superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName).end(
+                function(error,res){
+                    var json = res.body
+                    should.equal(res.status, 200)
+                    json.should.have.property('name')
+                    should.equal(testName, json.name , 'test name')
+                    json.should.have.property('state')
+                    should.equal('running', json.state,'state')
+                    json.should.have.property('entries')
+                    should.equal(2, json.entries.length, 'enterise count')
+                    json.should.have.property('testplans')
+                    should.equal(2, json.testplans.length, 'testplan count')
+                    done()
+                })
         })
     })
 
