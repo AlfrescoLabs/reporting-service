@@ -1,7 +1,6 @@
 
 var testruns =  require('../reports/testruns')
 var report =  require('../reports/defects-created')
-var trend =  require('../reports/defects-open')
 var scurve = require('../reports/scurve')
 var express = require('express')
 var router = express.Router()
@@ -17,10 +16,10 @@ router.get('/api/alfresco/:version/defects/created/summary', report.getDefects)
 /**
  * Routes to defect trend
  */
-router.get('/api/:product/:version/defects/open/:day/:month/:year', trend.updateDefectTrend)
-router.get('/api/:product/:version/defects/open', trend.updateDefectTrend);
-router.get('/api/:product/:version/defects/open/summary/csv', trend.getDefectsCSV)
-router.get('/api/:product/:version/defects/open/summary',trend.getDefectTrend)
+router.get('/api/:product/:version/defects/open/:day/:month/:year', report.updateDefectTrend)
+router.get('/api/:product/:version/defects/open', report.updateDefectTrend);
+router.get('/api/:product/:version/defects/open/summary/csv', report.getDefectsCSV)
+router.get('/api/:product/:version/defects/open/summary',report.getDefectTrend)
 
 /**
  * Create Test Run.
