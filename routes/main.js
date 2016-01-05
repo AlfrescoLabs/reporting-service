@@ -1,6 +1,6 @@
 
 var testruns =  require('../reports/testruns')
-var report =  require('../reports/defects-created')
+var report =  require('../reports/defects-trend')
 var scurve = require('../reports/scurve')
 var express = require('express')
 var router = express.Router()
