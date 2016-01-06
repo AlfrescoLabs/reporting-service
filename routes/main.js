@@ -14,7 +14,7 @@ router.get('/api/:product/:version/defects/created', report.updateAndDisplayDefe
 router.get('/api/alfresco/:version/defects/created/summary', report.getDefects)
 
 /**
- * Routes to defect trend
+ * Defect trend
  */
 router.get('/api/:product/:version/defects/open/:day/:month/:year', report.updateDefectTrend)
 router.get('/api/:product/:version/defects/open', report.updateDefectTrend);
@@ -22,7 +22,7 @@ router.get('/api/:product/:version/defects/open/summary/csv', report.getDefectsC
 router.get('/api/:product/:version/defects/open/summary',report.getDefectTrend)
 
 /**
- * Create Test Run.
+ * Test Run.
  */
  router.get('/api/:product/:version/testrun/:name/report', testruns.getBurnDownReport)
  router.get('/api/:product/:version/testrun/:name/start', testruns.start)
