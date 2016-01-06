@@ -227,7 +227,7 @@ describe('The test run captures the data relating to test execution of a run, wh
         testrunsAPI.generateEntry(data.project, data.testplans, function(err,result){
             should.exist(result)
             validateLabels(result)
-            should.equal(result.date, moment().format("DD-MM-YY"), "date value")
+            should.equal(result.date, moment().format("D/M/YY"), "date value")
             should.equal(result.testExecuted, 4289 ,"testExecuted value")
             should.equal(result.failedTest, 19 ,"failedTest value")
             done()
@@ -237,7 +237,9 @@ describe('The test run captures the data relating to test execution of a run, wh
         superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/'+ testName +'/entry')
         .end(function(err,res){
             should.equal(200, res.status)
-            should.equal(false,res.body.err)
+            should.equal(res.body.date, moment().format("D/M/YY"), "date value")
+            should.equal(res.body.failedTest, 19, "date value")
+            should.equal(res.body.testExecuted, 4289, "date value")
             superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName).end(
                 function(error,res){
                     var json = res.body

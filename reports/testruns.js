@@ -110,7 +110,8 @@ module.exports ={
                         return res.send({err:true, msg : err.err})
                     }
                     if(callback){
-                        res.send({err:false})
+
+                        res.send(data)
                     }
                 })
             })
@@ -197,7 +198,7 @@ module.exports ={
     // Function which collects all results of test execution and summarizes into an entry.
     generateEntry : function(project, testplans, callback){
         var data = {
-            date: moment().format("DD-MM-YY"),
+            date: moment().format("D/M/YY"),
             defectTarget: 0,
             defectActual: 0,
             testRemaining: 0,
