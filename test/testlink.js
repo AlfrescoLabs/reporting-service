@@ -12,6 +12,7 @@ var data = {
     'Blocked' : "4"
 }
 it('Should get testplan id', function(done){
+    this.timeout(10000);
     var json = {'project':'AlfrescoOne','testplan' : 'Ent5.1-ManualRegressionVFOn'}
     testlink.getTestPlanId(json, function(result){
         should.equal('927183', result)
