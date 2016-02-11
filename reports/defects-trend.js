@@ -72,13 +72,11 @@ module.exports = {
                         "AND priority in (blocker, critical) AND type in (bug)" +
                         "AND created >= " + parsedDate + " AND created <= " + parsedTomorrow +
                         " ORDER BY created DESC";
-
                     var path = jiraUrl + searchApiPath + filter;
                     var option = {
                         url: path,
                         headers: headers
                     }
-
                     //Query jira for open bugs
                     request(option, function(err, response, body) {
                         // JSON body
@@ -110,7 +108,6 @@ module.exports = {
                     });
                 }
             ],
-
             /*
              * Store and send collated result
              */
