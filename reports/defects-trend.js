@@ -15,7 +15,6 @@ var headers = {
 };
 
 module.exports = {
-
     /**
      * Gets defects stroed in db of the last 60 entries
      */
@@ -35,7 +34,6 @@ module.exports = {
             })
         })
     },
-
     /**
      * Get open bug list and populate db.
      */
@@ -70,7 +68,7 @@ module.exports = {
                  */
                 function getOpenBugs(callback) {
                     var filter = "project = ace " +
-                        "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
+                        "AND (fixVersion = '" + version + "' OR affectedVersion = '" + version + "') " +
                         "AND priority in (blocker, critical) AND type in (bug)" +
                         "AND created >= " + parsedDate + " AND created <= " + parsedTomorrow +
                         " ORDER BY created DESC";
@@ -224,11 +222,11 @@ module.exports = {
         async.parallel([getData], save);
 
         function getData(callback) {
-            var jql = 'project = ace AND status not in (closed, verified)' +
-                'AND labels in (triaged)' +
-                'AND (fixVersion = 5.1) AND priority ' +
-                'in (blocker, critical) AND type in (bug) ' +
-                ' ORDER BY created DESC'
+            var jql = "project = ace AND status not in (closed, verified)" +
+                "AND labels in (triaged)" +
+                "AND (fixVersion = '" + version + "') AND priority " +
+                "in (blocker, critical) AND type in (bug) " +
+                "ORDER BY created DESC"
 
             var searchApiPath = '/jira/rest/api/2/search';
             var path = jiraUrl + searchApiPath;
@@ -347,7 +345,7 @@ module.exports = {
                  */
                 function getOpenBugs(callback) {
                     var filter = "project = ace " +
-                        "AND (fixVersion = " + version + " OR affectedVersion = " + version + ") " +
+                        "AND (fixVersion = '" + version + "' OR affectedVersion = '" + version + "') " +
                         "AND priority in (blocker, critical) AND type in (bug)" +
                         "AND created >= " + parsedDate + " AND created <= " + parsedTomorrow +
                         " ORDER BY created DESC";
@@ -389,7 +387,6 @@ module.exports = {
                     });
                 }
             ],
-
             /*
              * Store and send collated result
              */
