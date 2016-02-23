@@ -124,17 +124,24 @@ var svg = d3.select("body").append("svg")
 
     var lines = svg.selectAll(".lines")
       .data(lines)
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "lines");
 
     lines.append("path")
       .attr("class", "line")
       .attr("d", function(d) {
           return line(d.values);
-      })
-      .style("stroke", function(d) {
-          return color(d.name);
-       });
+      }
+  ).each(function(d){
+          if(d.name === "plannedDefectReduction" || d.name === "actualDefectReduction"){
+              d3.select(this).style('stroke', 'orange');
+          }
+      }
+  ).each(function(d){
+          if("plannedDefectReduction" === d.name || "planTestRun" === d.name){
+              d3.select(this).style('stroke-dasharray',('3, 3'));
+          }
+      });
 });
 
 </script>
