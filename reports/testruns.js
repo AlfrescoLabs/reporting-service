@@ -220,5 +220,45 @@ module.exports ={
         function(err){
             callback(null, data)
         })
+    },
+    getSummary : function(req, res){
+        var json = [
+            {
+                "date": "16/11/2015",
+                "plannedDefectReduction": 44,
+                "actualDefectReduction" : 51,
+                "planTestRun": -56,
+                "testNotRun": -55.7
+            },
+            {
+                "date":"17/11/2015",
+                "plannedDefectReduction": 41,
+                "actualDefectReduction" : 52,
+                "planTestRun": -52,
+                "testNotRun": -52.43
+            },
+            {
+                "date": "18/11/2015",
+                "plannedDefectReduction": 39,
+                "actualDefectReduction" : 59,
+                "planTestRun": -49,
+                "testNotRun": -49.63
+            },
+            {
+                "date": "19/11/2015",
+                "plannedDefectReduction": 36,
+                "actualDefectReduction" : 59,
+                "planTestRun": -46,
+                "testNotRun": -37.91
+            },
+            {
+                "date": "20/11/2015",
+                "plannedDefectReduction": 34,
+                "actualDefectReduction" : 36,
+                "planTestRun": -43,
+                "testNotRun": -33.53
+            }]
+
+        res.send(json)
     }
 }

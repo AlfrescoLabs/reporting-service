@@ -24,6 +24,7 @@ router.get('/api/:product/:version/defects/open/summary',report.getDefectTrend)
 /**
  * Test Run.
  */
+
  router.get('/api/:product/:version/testrun/:name/report', testruns.getBurnDownReport)
  router.get('/api/:product/:version/testrun/:name/start', testruns.start)
  router.get('/api/:product/:version/testrun/:name/stop', testruns.stop)
@@ -33,5 +34,6 @@ router.get('/api/:product/:version/defects/open/summary',report.getDefectTrend)
  router.delete('/api/:product/:version/testrun/:name',testruns.delete)
  router.post('/api/:product/:version/testrun/', testruns.create)
  router.put('/api/:product/:version/testrun', testruns.update)
-
+ //Summary report
+router.get('/api/:product/:version/summary', testruns.getSummary)
 module.exports = router
