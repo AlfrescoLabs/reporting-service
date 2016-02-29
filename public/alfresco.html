@@ -148,7 +148,7 @@ var svg = d3.select("body").append("svg")
       });
 
     var legend = svg.selectAll(".legend")
-        .data(color.domain().slice().reverse())
+        .data(color.domain().slice())
         .enter().append("g")
         .attr("class", "legend")
         .attr("transform", function(d, i) {
