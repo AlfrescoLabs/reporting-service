@@ -154,17 +154,29 @@ var svg = d3.select("body").append("svg")
         .attr("transform", function(d, i) {
           return "translate(0," + i * 20 + ")";
         });
-    legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
+
+
+    legend.append("line")
+        .attr("x1", width - 28)
+        .attr("x2", width)
+        .attr("y1", 10)
+        .attr("y2", 10)
+        .each(function(name){
+            if("testNotRun" === name || "planTestRun" === name){
+                d3.select(this).style('stroke', 'steelblue');
+            } else {
+                d3.select(this).style('stroke', 'orange');
+            }
+        })
         .each(function(d){
-            var c =  "plannedDefectReduction" === d || "actualDefectReduction" === d ? "orange" : "steelblue"
-            d3.select(this).style('fill', c);
+            if("plannedDefectReduction" === d || "planTestRun" === d){
+                d3.select(this).style("stroke-dasharray","5,5");
+            }
+
         });
 
     legend.append("text")
-        .attr("x", width - 24)
+        .attr("x", width - 34)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
