@@ -142,14 +142,15 @@ module.exports ={
         }
         var testplans = req.body.testplans
         var data =
-            {"name":name,
-            "startDate":startDate,
-            "endDate": endDate,
-            "tc" : tc,
-            "state": "ready", // the 3 states: ready, running, finished
-            "entries":[],
-            "project" : project,
-            "testplans" : testplans
+            {
+                "name":name,
+                "startDate":startDate,
+                "endDate": endDate,
+                "tc" : tc,
+                "state": "ready", // the 3 states: ready, running, finished
+                "entries":[],
+                "project" : project,
+                "testplans" : testplans
             }
             if(targetDate !== undefined && targetDate !== null){
                 data.targetDate = targetDate
@@ -221,7 +222,9 @@ module.exports ={
             callback(null, data)
         })
     },
-    getSummary : function(req, res){
+    getReport : function(req, res){
+        var name = req.params.name
+        var version = req.params.version
         var json = [
             {
                 "date": "16/11/2015",
@@ -349,6 +352,7 @@ module.exports ={
                 "planTestRun": 0,
                 "testNotRun": 0
             }]
+
 
         res.send(json)
     }
