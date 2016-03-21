@@ -119,7 +119,7 @@ function verifyModel(json){
       should.equal(res.status,200)
       var today = new Date()
       var parsedDate = today.getDate() + "/" + (new Number(today.getMonth()) + 1) + "/" + today.getFullYear()
-      db.collection('5.1-trend').find({
+      db.collection('5.1-defect-trend').find({
         'dateDisplay': parsedDate
       }).toArray(function(err, result) {
         should.equal(1, result.length)
