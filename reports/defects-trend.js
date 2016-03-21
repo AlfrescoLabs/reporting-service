@@ -13,6 +13,8 @@ var searchApiPath = '/jira/rest/api/2/search?jql=';
 var headers = {
     "Authorization": config.jira.authentication
 };
+var defectReportSuffix = '-defect-report'
+var defectTrendSuffix = '-defect-trend'
 
 module.exports = {
     /**
@@ -22,7 +24,7 @@ module.exports = {
         var version = req.params.version;
         //First we get the latest data
         module.exports.updateDefectReport(req, function() {
-            db.collection(version + '-report').find({}, {
+            db.collection(version + defectReportSuffix).find({}, {
                 "date": 1,
                 "dateDisplay": 1,
                 "open": 1
@@ -141,7 +143,7 @@ module.exports = {
     getDefectsCSV: function(req, res) {
         var version = req.params.version;
         var csv = '\"Date\","Open CAT 1 defects end of day","open CAT 2 defects end of day","CAT 1 defects pending verification","CAT 2 defects pending verification"' + '\r\n'
-        db.collection(version + '-trend').find({}, {
+        db.collection(version + defectTrendSuffix).find({}, {
             "date": 1,
             "dateDisplay": 1,
             "total": 1,
@@ -165,7 +167,7 @@ module.exports = {
         var version = req.params.version;
         module.exports.updateTrend(req, function() {})
             //Mongo query to get the last 60 days of entries
-        db.collection(version + '-trend').find({}, {
+        db.collection(version + defectTrendSuffix).find({}, {
             "date": 1,
             "dateDisplay": 1,
             "total": 1,
@@ -292,7 +294,7 @@ module.exports = {
                 return;
             }
             //store it to mongodb
-            report = db.collection(version + '-trend');
+            report = db.collection(version + defectTrendSuffix);
             report.update({
                 dateDisplay: model.dateDisplay
             }, model, {
@@ -389,7 +391,7 @@ module.exports = {
              */
             function save(err, results) {
                 //store it to mongodb
-                report = db.collection(version + '-report');
+                report = db.collection(version + defectReportSuffix);
                 report.update({
                         dateDisplay: json.dateDisplay
                     },

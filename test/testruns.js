@@ -202,26 +202,26 @@ describe('The test run captures the data relating to test execution of a run, wh
         })
     })
 
-
-    it('Should get burn down report',function(done){
-        superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName + '/report').end(function(error, result){
-            var json = result.body
-            json.should.have.property('name')
-            should.equal(json.name,testName ,'test name')
-            json.should.have.property('startDate')
-            should.equal(json.startDate, '12/11/2200', 'start date')
-            json.should.have.property('endDate')
-            should.equal(json.endDate, '12/12/2200','end date')
-            json.should.have.property('tc')
-            should.equal(json.tc,100,'total test case count')
-            json.should.have.property('entries')
-            should.equal(json.entries.length, 1, 'entries')
-            json.should.have.property('testplans')
-            should.equal(json.testplans.length, 2, 'test plan count')
-            json.should.have.property('scurve')
-            done()
-        })
-    })
+    // API has been removed
+    // it('Should get burn down report',function(done){
+    //     superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/testrun/' + testName + '/report').end(function(error, result){
+    //         var json = result.body
+    //         json.should.have.property('name')
+    //         should.equal(json.name,testName ,'test name')
+    //         json.should.have.property('startDate')
+    //         should.equal(json.startDate, '12/11/2200', 'start date')
+    //         json.should.have.property('endDate')
+    //         should.equal(json.endDate, '12/12/2200','end date')
+    //         json.should.have.property('tc')
+    //         should.equal(json.tc,100,'total test case count')
+    //         json.should.have.property('entries')
+    //         should.equal(json.entries.length, 1, 'entries')
+    //         json.should.have.property('testplans')
+    //         should.equal(json.testplans.length, 2, 'test plan count')
+    //         json.should.have.property('scurve')
+    //         done()
+    //     })
+    // })
 
     it('Should create an entry from the list of testplans',function(done){
         testrunsAPI.generateEntry(data.project, data.testplans, function(err,result){
