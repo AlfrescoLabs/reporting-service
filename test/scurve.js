@@ -18,13 +18,14 @@ var expectedScurve = [
 { date: "12/11/2015",tc: 93},
 { date: "13/11/2015",tc: 96},
 { date: "14/11/2015",tc: 98},
-{ date: "15/11/2015",tc: 99}
+{ date: "15/11/2015",tc: 99},
+{ date: "16/11/2015",tc: 99}
 ]
 //////////////////// SCURVE Projection
 describe('reporting/api/alfresco/:version/scurve/:startDate/:endDate/:totalTC',function(done){
     it('Should get array of scurve projection based on start date,end date and total test cases', function(done) {
       this.timeout(15000); // Setting a longer timeout
-      var curve = scurve.getScurve('1/11/2015','15/11/2015',99)
+      var curve = scurve.getScurve('1/11/2015','15/11/2015',100)
       expect(expectedScurve).toEqual(curve)
       done()
     })
