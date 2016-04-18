@@ -1,4 +1,4 @@
 var config = require('./config.global')
 config.env = 'development'
-config.mongo = 'mongodb://localhost:27017/testplatform'
+config.mongo = process.env.NODE_MONGO || 'mongodb://localhost:27017/testplatform'
 module.exports = config
