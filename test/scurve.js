@@ -21,6 +21,7 @@ var expectedScurve = [
 { date: "15/11/2015",tc: 99}
 ]
 //////////////////// SCURVE Projection
+/// Make sure your timezone is BST(Europe/London) in order for this test to pass
 describe('reporting/api/alfresco/:version/scurve/:startDate/:endDate/:totalTC',function(done){
     it('Should get array of scurve projection based on start date,end date and total test cases', function(done) {
       this.timeout(15000); // Setting a longer timeout
