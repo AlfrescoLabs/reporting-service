@@ -1,6 +1,7 @@
 
 var testruns =  require('../reports/testruns')
 var report =  require('../reports/defects-trend')
+var summary =  require('../reports/summary-report')
 var scurve = require('../reports/scurve')
 var express = require('express')
 var router = express.Router()
@@ -35,5 +36,5 @@ router.get('/api/:product/:version/defects/open/summary',report.getDefectTrend)
  router.put('/api/:product/:version/testrun', testruns.update)
 
  //Summary report
-router.get('/api/:product/:version/report', testruns.getReport)
+router.get('/api/:product/:version/report', summary.getReport)
 module.exports = router

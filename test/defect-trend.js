@@ -27,30 +27,30 @@ before(function(done){
     })
 })
 
-describe('reporting/api/alfresco/5.1/defects/created/01/01/2015', function() {
-    it('Should only have 1 entery per given date',function(done){
-      this.timeout(15000); // Setting a longer timeout
-      var targetDate = new Date(2015, 0, 01, 0, 0, 0, 0)
-      var parsedDate =  targetDate.getDate()+ "/" + (new Number(targetDate.getMonth()) + 1) + "/" + targetDate.getFullYear()
-      //Call api to update backend twice, expect one entry as this as an upsert op.
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/01/01/2015').end(function(err,res){
-        should.equal(res.status,200)
-        should.equal('1/1/2015', res.body.dateDisplay)
-        verifyDB(parsedDate)
-      })
-      superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/1/1/2015').end(function(err,res){
-        should.equal(res.status,200)
-        should.equal('1/1/2015', res.body.dateDisplay)
-        verifyDB(parsedDate)
-        done()
-      })
-    })
-    function verifyDB(parsedDate){
-      db.collection('5.1-report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
-      should(1).be.equal(result.length)
-      })
-    }
-})
+// describe('reporting/api/alfresco/5.1/defects/created/01/01/2015', function() {
+//     it('Should only have 1 entery per given date',function(done){
+//       this.timeout(15000); // Setting a longer timeout
+//       var targetDate = new Date(2015, 0, 01, 0, 0, 0, 0)
+//       var parsedDate =  targetDate.getDate()+ "/" + (new Number(targetDate.getMonth()) + 1) + "/" + targetDate.getFullYear()
+//       //Call api to update backend twice, expect one entry as this as an upsert op.
+//       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/01/01/2015').end(function(err,res){
+//         should.equal(res.status,200)
+//         should.equal('1/1/2015', res.body.dateDisplay)
+//         verifyDB(parsedDate)
+//       })
+//       superagent.get('http://localhost:3000/reporting/api/alfresco/5.1/defects/created/1/1/2015').end(function(err,res){
+//         should.equal(res.status,200)
+//         should.equal('1/1/2015', res.body.dateDisplay)
+//         verifyDB(parsedDate)
+//         done()
+//       })
+//     })
+//     function verifyDB(parsedDate){
+//       db.collection('5.1-report').find({'dateDisplay':parsedDate}).toArray(function(err, result) {
+//       should(1).be.equal(result.length)
+//       })
+//     }
+// })
 after(function(done){
   if(db.databaseName === "test-testplatform"){
     db.dropDatabase(function(){
@@ -70,7 +70,7 @@ describe('reporting/api/alfresco/5.1/defects/created', function() {
         response.should.have.property('date')
         should.not.exist(response.close)
         response.should.have.property('open')
-        verifyModel(response.open)
+        // verifyModel(response.open)
         done()
       });
   });
