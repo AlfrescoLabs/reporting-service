@@ -19,13 +19,25 @@ module.exports = {
     }, null, true, 'Europe/London'),
     "job3 get open cloud defect ": new CronJob('* * 23 * * *', function() {
         console.log('Populating data for open defects on cloud')
-        request.get('http://localhost:3000/reporting/api/alfresco/Cloud 43/defects/open/summary', function(err, response, body) {
+        request.get('http://localhost:3000/reporting/api/alfresco/Cloud/defects/open/summary', function(err, response, body) {
             console.log(body);
         })
   }, null, true, 'Europe/London'),
     "job4 get defects created data" : new CronJob('* * 23 * * *', function() {
         console.log('Populating data for defects created on cloud')
-        request.get('http://localhost:3000/reporting/api/alfresco/Cloud 43/defects/created/summary', function(err, response, body) {
+        request.get('http://localhost:3000/reporting/api/alfresco/Cloud/defects/created/summary', function(err, response, body) {
+            console.log(body);
+        })
+    }, null, true, 'Europe/London'),
+    "job5 get defects created data for 5.1.1" : new CronJob('* * 23 * * *', function() {
+        console.log('Populating data for defects created on cloud')
+        request.get('http://localhost:3000/reporting/api/alfresco/5.1.1/defects/created/summary', function(err, response, body) {
+            console.log(body);
+        })
+    }, null, true, 'Europe/London'),
+    "job6 get open 5.1.1 defect ": new CronJob('* * 23 * * *', function() {
+        console.log('Populating data for open defects on cloud')
+        request.get('http://localhost:3000/reporting/api/alfresco/5.1.1/defects/open/summary', function(err, response, body) {
             console.log(body);
         })
     }, null, true, 'Europe/London'),
