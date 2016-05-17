@@ -53,7 +53,7 @@ node('reportingsrv') {
               -e "SERVICE_NAME=Reporting-Service-DEV" \
               -e "SERVICE_ID=repsrv:backend-dev:9100" \
               -e "SERVICE_CHECK_HTTP=/" \
-              -e "SERVICE_CHECK_INTERVAL=15s" \
+              -e "SERVICE_CHECK_INTERVAL=120s" \
               -e "NODE_ENV=development" \
               -e "NODE_HOST=localhost" \
               -e "NODE_MONGO=${NODE_MONGO}" \
@@ -77,7 +77,7 @@ node('reportingsrv') {
           -e "SERVICE_NAME=Reporting-Service-PROD" \
           -e "SERVICE_ID=repsrv:backend-prod:9000" \
           -e "SERVICE_CHECK_HTTP=/" \
-          -e "SERVICE_CHECK_INTERVAL=15s" \
+          -e "SERVICE_CHECK_INTERVAL=120s" \
           -e "NODE_ENV=prod" \
           -e "NODE_HOST=localhost" \
           -e "NODE_MONGO=${NODE_MONGO}" \
