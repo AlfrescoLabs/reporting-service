@@ -48,7 +48,7 @@ node('reportingsrv') {
 
       def devContainer =
           docker.image('alfness:5000/test-platform/backend:latest')
-          .run('-p 9100:3000 \
+          .run('-p 172.29.102.94:9100:3000 \
               --name backend-dev \
               -e "SERVICE_NAME=Reporting-Service-DEV" \
               -e "SERVICE_ID=repsrv:backend-dev:9100" \
@@ -72,7 +72,7 @@ node('reportingsrv') {
       sh 'docker ps -alf "name=backend-prod" -q | while read line; do docker stop "$line"; docker rm "$line"; done'
       def prodContainer =
           docker.image('alfness:5000/test-platform/backend:latest')
-          .run('-p 9000:3000 \
+          .run('-p 172.29.102.94:9000:3000 \
           --name backend-prod \
           -e "SERVICE_NAME=Reporting-Service-PROD" \
           -e "SERVICE_ID=repsrv:backend-prod:9000" \
