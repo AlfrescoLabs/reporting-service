@@ -13,7 +13,7 @@ properties([
 node('reportingsrv') {
   ws('reportingservice') {
 
-    docker.withRegistry('https://alfness:5000') {
+    docker.withRegistry('https://docker-internal.alfresco.com') {
     withCredentials([[$class: 'StringBinding', credentialsId: 'b596801f-4698-4b7f-9643-51d8c7c5052e', variable: 'JIRA_URL'],
                       [$class: 'StringBinding', credentialsId: '01465e89-0dc3-4889-99f2-df5e8277f1e7', variable: 'JIRA_AUTH'],
                       [$class: 'StringBinding', credentialsId: '2cd3a76d-c77d-4443-89e1-83c5633edaaf', variable: 'TESTLINK_URL'],
@@ -47,8 +47,8 @@ node('reportingsrv') {
       sh 'docker ps -alf "name=backend-dev" -q | while read line; do docker stop "$line"; docker rm "$line"; done'
 
       def devContainer =
-          docker.image('alfness:5000/test-platform/backend:latest')
-          .run('-p 9100:3000 \
+          docker.image('docker-internal.alfresco.com/test-platform/backend:latest')
+          .run('-p 172.29.102.94:9100:3000 \
               --name backend-dev \
               -e "SERVICE_NAME=Reporting-Service-DEV" \
               -e "SERVICE_ID=repsrv:backend-dev:9100" \
@@ -71,8 +71,8 @@ node('reportingsrv') {
       sh 'docker ps -f "name=backend-prod" -q | while read line; do docker stop "$line"; docker rm "$line"; done'
       sh 'docker ps -alf "name=backend-prod" -q | while read line; do docker stop "$line"; docker rm "$line"; done'
       def prodContainer =
-          docker.image('alfness:5000/test-platform/backend:latest')
-          .run('-p 9000:3000 \
+          docker.image('docker-internal.alfresco.com/test-platform/backend:latest')
+          .run('-p 172.29.102.94:9000:3000 \
           --name backend-prod \
           -e "SERVICE_NAME=Reporting-Service-PROD" \
           -e "SERVICE_ID=repsrv:backend-prod:9000" \

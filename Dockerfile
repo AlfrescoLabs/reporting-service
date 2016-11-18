@@ -1,4 +1,4 @@
-FROM alfness:5000/test-platform/base
+FROM docker-internal.alfresco.com/test-platform/base
 
 COPY . /
 
