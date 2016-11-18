@@ -223,7 +223,7 @@ module.exports = {
         function getData(callback) {
             var jql = "project = ace AND status not in (closed, verified)" +
                 "AND labels in (triaged)" +
-                "AND (fixVersion = '" + version + "' OR affectedVersion ='" + version +"')" +
+                "AND (fixVersion = '" + version + "')" +
                 "AND priority " +
                 "in (blocker, critical) AND type in (bug) " +
                 "ORDER BY created DESC"
