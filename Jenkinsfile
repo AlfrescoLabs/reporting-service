@@ -24,10 +24,6 @@ node('reportingsrv') {
       stage 'Checkout'
       git url: 'https://github.com/AlfrescoTestAutomation/reporting-service.git'
 
-      stage 'Test Build'
-      withEnv(['NODE_ENV=test','NODE_MONGO=']) {
-        sh 'npm install && mocha test --timeout 15000'
-      }
     }
 
     if ( Build_and_Push_Image == "yes" ) {
