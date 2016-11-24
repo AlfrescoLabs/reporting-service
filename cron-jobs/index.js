@@ -41,4 +41,16 @@ module.exports = {
             console.log(body);
         })
     }, null, true, 'Europe/London'),
+    "job7 get defects created data for 5.2" : new CronJob('* * 23 * * *', function() {
+        console.log('Populating data for defects created on cloud')
+        request.get('http://localhost:3000/reporting/api/alfresco/5.2/defects/created/summary', function(err, response, body) {
+            console.log(body);
+        })
+    }, null, true, 'Europe/London'),
+    "job8 get open 5.2 defect" : new CronJob('* * 23 * * *', function() {
+        console.log('Populating data for defects created on cloud')
+        request.get('http://localhost:3000/reporting/api/alfresco/5.2/defects/open/summary', function(err, response, body) {
+            console.log(body);
+        })
+    }, null, true, 'Europe/London'),
 }
