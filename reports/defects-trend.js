@@ -351,6 +351,7 @@ module.exports = {
                         " ORDER BY created DESC";
 
                     var path = jiraUrl + searchApiPath + filter;
+                    console.log(path)
                     var option = {
                         url: path,
                         headers: headers
@@ -359,7 +360,7 @@ module.exports = {
                     //Query jira for open bugs
                     request(option, function(err, response, body) {
                         // JSON body
-                        if (err) {
+                        if (err || body === undefined) {
                             console.log(err);
                             callback(true);
                             return;
