@@ -246,10 +246,11 @@ module.exports = {
                     callback(true)
                     return
                 }
-                var data = body.issues
-                model.total = body.issues.length
+
+                model.total = 0
                 var issues = body.issues
                 if (typeof issues !== 'undefined') {
+                    model.total = body.issues.length
                     issues.map(function(issue) {
                         var item = {
                             id: issue.key,
